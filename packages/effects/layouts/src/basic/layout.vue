@@ -70,6 +70,10 @@ const headerTheme = computed(() => {
   return dark ? 'dark' : 'light';
 });
 
+const appName = computed(() => {
+  return $t(preferences.app.name);
+});
+
 const logoClass = computed(() => {
   const { collapsedShowTitle } = preferences.sidebar;
   const classes: string[] = [];
@@ -281,7 +285,7 @@ const headerSlots = computed(() => {
         :collapsed="logoCollapsed"
         :src="preferences.logo.source"
         :src-dark="preferences.logo.sourceDark"
-        :text="preferences.app.name"
+        :text="appName"
         :theme="showHeaderNav ? headerTheme : theme"
         @click="clickLogo"
       >
@@ -372,7 +376,7 @@ const headerSlots = computed(() => {
       <VbenLogo
         v-if="preferences.logo.enable"
         :fit="preferences.logo.fit"
-        :text="preferences.app.name"
+        :text="appName"
         :theme="sidebarThemeSub"
       >
         <template v-if="$slots['logo-text']" #text>

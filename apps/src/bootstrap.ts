@@ -15,6 +15,7 @@ import SysOriginSelect from '#/components/sys-origin-select.vue';
 import { initComponentAdapter } from './adapter/component';
 import { initSetupVbenForm } from './adapter/form';
 import App from './app.vue';
+import { setupRuntimeLocaleSync } from './locales/runtime';
 import { router } from './router';
 import './styles/table-filters.css';
 
@@ -68,12 +69,13 @@ async function bootstrap(namespace: string) {
     if (preferences.app.dynamicTitle) {
       const routeTitle = router.currentRoute.value.meta?.title;
       const pageTitle =
-        (routeTitle ? `${$t(routeTitle)} - ` : '') + preferences.app.name;
+        (routeTitle ? `${$t(routeTitle)} - ` : '') + $t(preferences.app.name);
       useTitle(pageTitle);
     }
   });
 
   app.mount('#app');
+  setupRuntimeLocaleSync();
 }
 
 export { bootstrap };

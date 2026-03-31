@@ -20,6 +20,7 @@ import dayjs from 'dayjs';
 const antdLocale = ref<Locale>(antdDefaultLocale);
 
 const modules = import.meta.glob('./langs/**/*.json');
+const runtimeModules = import.meta.glob('./langs/*/runtime.json');
 
 const localesMap = loadLocalesMapFromDir(
   /\.\/langs\/([^/]+)\/(.*)\.json$/,
@@ -31,11 +32,26 @@ const localesMap = loadLocalesMapFromDir(
  * @param lang
  */
 async function loadMessages(lang: SupportedLanguagesType) {
-  const [appLocaleMessages] = await Promise.all([
+  const [appLocaleMessages, runtimeMessages] = await Promise.all([
     localesMap[lang]?.(),
+    loadRuntimeMessages(lang),
     loadThirdPartyMessage(lang),
   ]);
-  return appLocaleMessages?.default;
+  const appMessages = appLocaleMessages?.default ?? {};
+  const { runtime: _runtime, ...rest } = appMessages;
+
+  return {
+    ...(runtimeMessages ?? {}),
+    ...rest,
+  };
+}
+
+async function loadRuntimeMessages(lang: SupportedLanguagesType) {
+  const runtimeLoader = runtimeModules[`./langs/${lang}/runtime.json`];
+  const runtimeMessages = runtimeLoader
+    ? ((await runtimeLoader()) as { default?: Record<string, string> })
+    : undefined;
+  return runtimeMessages?.default;
 }
 
 /**

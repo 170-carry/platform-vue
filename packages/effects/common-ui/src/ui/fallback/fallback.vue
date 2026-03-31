@@ -36,7 +36,7 @@ const IconOffline = defineAsyncComponent(
 
 const titleText = computed(() => {
   if (props.title) {
-    return props.title;
+    return $t(props.title);
   }
 
   switch (props.status) {
@@ -63,7 +63,7 @@ const titleText = computed(() => {
 
 const descText = computed(() => {
   if (props.description) {
-    return props.description;
+    return $t(props.description);
   }
   switch (props.status) {
     case '403': {

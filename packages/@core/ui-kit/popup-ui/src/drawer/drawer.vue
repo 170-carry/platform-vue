@@ -240,16 +240,16 @@ const getForceMount = computed(() => {
           />
           <SheetTitle v-if="title" class="text-left">
             <slot name="title">
-              {{ title }}
+              {{ $t(title) }}
 
               <VbenHelpTooltip v-if="titleTooltip" trigger-class="pb-1">
-                {{ titleTooltip }}
+                {{ $t(titleTooltip) }}
               </VbenHelpTooltip>
             </slot>
           </SheetTitle>
           <SheetDescription v-if="description" class="mt-1 text-xs">
             <slot name="description">
-              {{ description }}
+              {{ $t(description) }}
             </slot>
           </SheetDescription>
         </div>

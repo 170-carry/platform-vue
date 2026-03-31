@@ -287,18 +287,18 @@ function handleClosed() {
       >
         <DialogTitle v-if="title" class="text-left">
           <slot name="title">
-            {{ title }}
+            {{ $t(title) }}
 
             <slot v-if="titleTooltip" name="titleTooltip">
               <VbenHelpTooltip trigger-class="pb-1">
-                {{ titleTooltip }}
+                {{ $t(titleTooltip) }}
               </VbenHelpTooltip>
             </slot>
           </slot>
         </DialogTitle>
         <DialogDescription v-if="description">
           <slot name="description">
-            {{ description }}
+            {{ $t(description) }}
           </slot>
         </DialogDescription>
         <VisuallyHidden v-if="!title || !description">

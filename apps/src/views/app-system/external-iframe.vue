@@ -4,11 +4,13 @@ import { useRoute } from 'vue-router';
 
 import { Page } from '@vben/common-ui';
 
+import { $t } from '#/locales';
+
 defineOptions({ name: 'LegacyExternalIframe' });
 
 const route = useRoute();
 
-const title = computed(() => String(route.meta.title || '外部页面'));
+const title = computed(() => String($t(String(route.meta.title || '外部页面'))));
 const iframeSrc = computed(() => String(route.meta.iframeSrc || ''));
 </script>
 

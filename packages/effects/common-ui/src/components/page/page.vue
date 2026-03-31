@@ -5,6 +5,7 @@ import type { PageProps } from './types';
 
 import { computed, nextTick, onMounted, ref, useTemplateRef } from 'vue';
 
+import { $t } from '@vben/locales';
 import { CSS_VARIABLE_LAYOUT_CONTENT_HEIGHT } from '@vben-core/shared/constants';
 import { cn } from '@vben-core/shared/utils';
 
@@ -70,13 +71,13 @@ onMounted(() => {
       <div class="flex-auto">
         <slot name="title">
           <div v-if="title" class="mb-2 flex text-lg font-semibold">
-            {{ title }}
+            {{ $t(title) }}
           </div>
         </slot>
 
         <slot name="description">
           <p v-if="description" class="text-muted-foreground">
-            {{ description }}
+            {{ $t(description) }}
           </p>
         </slot>
       </div>

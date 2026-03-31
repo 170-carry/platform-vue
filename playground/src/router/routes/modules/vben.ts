@@ -3,9 +3,7 @@ import type { RouteRecordRaw } from 'vue-router';
 import {
   VBEN_ANT_PREVIEW_URL,
   VBEN_ANTDV_NEXT_PREVIEW_URL,
-  VBEN_DOC_URL,
   VBEN_ELE_PREVIEW_URL,
-  VBEN_GITHUB_URL,
   VBEN_LOGO_URL,
   VBEN_NAIVE_PREVIEW_URL,
   VBEN_TD_PREVIEW_URL,
@@ -30,26 +28,6 @@ const routes: RouteRecordRaw[] = [
     name: 'VbenProject',
     path: '/vben-admin',
     children: [
-      {
-        name: 'VbenDocument',
-        path: '/vben-admin/document',
-        component: IFrameView,
-        meta: {
-          icon: 'lucide:book-open-text',
-          link: VBEN_DOC_URL,
-          title: $t('demos.vben.document'),
-        },
-      },
-      {
-        name: 'VbenGithub',
-        path: '/vben-admin/github',
-        component: IFrameView,
-        meta: {
-          icon: 'mdi:github',
-          link: VBEN_GITHUB_URL,
-          title: 'Github',
-        },
-      },
       {
         name: 'VbenAntdv',
         path: '/vben-admin/antdv',

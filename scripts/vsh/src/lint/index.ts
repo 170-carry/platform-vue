@@ -16,24 +16,12 @@ async function runLint({ format }: LintCommandOptions) {
     await execaCommand(`stylelint "**/*.{vue,css,less,scss}" --cache --fix`, {
       stdio: 'inherit',
     });
-    await execaCommand(`oxfmt`, {
-      stdio: 'inherit',
-    });
-    await execaCommand(`oxlint --fix`, {
-      stdio: 'inherit',
-    });
     await execaCommand(`eslint . --cache --fix`, {
       stdio: 'inherit',
     });
     return;
   }
   await Promise.all([
-    execaCommand(`oxfmt --check`, {
-      stdio: 'inherit',
-    }),
-    execaCommand(`oxlint`, {
-      stdio: 'inherit',
-    }),
     execaCommand(`eslint . --cache`, {
       stdio: 'inherit',
     }),

@@ -13,6 +13,7 @@ const SvgCakeIcon = createIconifyIcon('svg:cake');
 const SvgAntdvLogoIcon = createIconifyIcon('svg:antdv-logo');
 const SvgGithubIcon = createIconifyIcon('svg:github');
 const SvgGoogleIcon = createIconifyIcon('svg:google');
+const SvgLikeiIcon = createIconifyIcon('svg:likei');
 const SvgQQChatIcon = createIconifyIcon('svg:qqchat');
 const SvgWeChatIcon = createIconifyIcon('svg:wechat');
 const SvgDingDingIcon = createIconifyIcon('svg:dingding');
@@ -33,6 +34,7 @@ export {
   SvgDownloadIcon,
   SvgGithubIcon,
   SvgGoogleIcon,
+  SvgLikeiIcon,
   SvgQQChatIcon,
   SvgTDesignIcon,
   SvgWeChatIcon,

@@ -10,11 +10,13 @@ import '@vben/styles/antdv-next';
 import { useTitle } from '@vueuse/core';
 
 import { $t, setupI18n } from '#/locales';
+import SysOriginSelect from '#/components/sys-origin-select.vue';
 
 import { initComponentAdapter } from './adapter/component';
 import { initSetupVbenForm } from './adapter/form';
 import App from './app.vue';
 import { router } from './router';
+import './styles/table-filters.css';
 
 async function bootstrap(namespace: string) {
   // 初始化组件适配器
@@ -33,6 +35,7 @@ async function bootstrap(namespace: string) {
   // });
 
   const app = createApp(App);
+  app.component('SysOriginSelect', SysOriginSelect);
 
   // 注册v-loading指令
   registerLoadingDirective(app, {

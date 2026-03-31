@@ -19,11 +19,8 @@ const DEFAULT_CONFIG = {
   ],
   // 需要忽略的包
   ignorePackages: [
-    '@vben/commitlint-config',
     '@vben/eslint-config',
     '@vben/node-utils',
-    '@vben/oxfmt-config',
-    '@vben/oxlint-config',
     '@vben/stylelint-config',
     '@vben/tsconfig',
     '@vben/vite-config',

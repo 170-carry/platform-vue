@@ -1,4 +1,4 @@
-import type { Recordable, UserInfo } from '@vben/types';
+import type { Recordable } from '@vben/types';
 
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -7,11 +7,9 @@ import { LOGIN_PATH } from '@vben/constants';
 import { preferences } from '@vben/preferences';
 import { resetAllStores, useAccessStore, useUserStore } from '@vben/stores';
 
-import { notification } from 'antdv-next';
 import { defineStore } from 'pinia';
 
-import { getAccessCodesApi, getUserInfoApi, loginApi, logoutApi } from '#/api';
-import { $t } from '#/locales';
+import { getUserInfoApi, loginApi, logoutApi } from '#/api';
 
 export const useAuthStore = defineStore('auth', () => {
   const accessStore = useAccessStore();
@@ -29,52 +27,41 @@ export const useAuthStore = defineStore('auth', () => {
     params: Recordable<any>,
     onSuccess?: () => Promise<void> | void,
   ) {
-    // 异步处理用户登录操作并获取 accessToken
-    let userInfo: null | UserInfo = null;
     try {
       loginLoading.value = true;
-      const { accessToken } = await loginApi(params);
+      const { accessToken } = await loginApi({
+        password: String(params?.password ?? ''),
+        username: String(params?.username ?? '').trim(),
+      });
 
-      // 如果成功获取到 accessToken
       if (accessToken) {
         accessStore.setAccessToken(accessToken);
-
-        // 获取用户信息并存储到 accessStore 中
-        const [fetchUserInfoResult, accessCodes] = await Promise.all([
-          fetchUserInfo(),
-          getAccessCodesApi(),
-        ]);
-
-        userInfo = fetchUserInfoResult;
-
-        userStore.setUserInfo(userInfo);
-        accessStore.setAccessCodes(accessCodes);
+        accessStore.setRefreshToken(null);
+        accessStore.setAccessCodes([]);
+        accessStore.setIsAccessChecked(false);
+        userStore.setUserInfo(null);
 
         if (accessStore.loginExpired) {
           accessStore.setLoginExpired(false);
-        } else {
-          onSuccess
-            ? await onSuccess?.()
-            : await router.push(
-                userInfo.homePath || preferences.app.defaultHomePath,
-              );
         }
 
-        if (userInfo?.realName) {
-          notification.success({
-            description: `${$t('authentication.loginSuccessDesc')}:${userInfo?.realName}`,
-            duration: 3,
-            title: $t('authentication.loginSuccess'),
-          });
-        }
+        onSuccess
+          ? await onSuccess?.()
+          : await router.push(preferences.app.defaultHomePath);
       }
+      return {
+        userInfo: null,
+      };
+    } catch (error) {
+      accessStore.setAccessToken(null);
+      accessStore.setRefreshToken(null);
+      accessStore.setAccessCodes([]);
+      accessStore.setIsAccessChecked(false);
+      userStore.setUserInfo(null);
+      throw error;
     } finally {
       loginLoading.value = false;
     }
-
-    return {
-      userInfo,
-    };
   }
 
   async function logout(redirect: boolean = true) {

@@ -41,9 +41,12 @@
     "@vben/types": "workspace:*",
     "@vben/utils": "workspace:*",
     "@vueuse/core": "catalog:",
+    "ali-oss": "^6.23.0",
     "antdv-next": "catalog:",
     "dayjs": "catalog:",
     "pinia": "catalog:",
+    "sockjs-client": "^1.6.1",
+    "stompjs": "^2.3.3",
     "vue": "catalog:",
     "vue-router": "catalog:"
   }

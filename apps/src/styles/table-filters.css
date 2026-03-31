@@ -1,0 +1,25 @@
+:where(.toolbar, .filter-bar, .inline-filter-toolbar) {
+  align-items: center;
+  display: flex;
+  flex-wrap: nowrap !important;
+  gap: 12px;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 4px;
+  white-space: nowrap;
+}
+
+:where(.toolbar, .filter-bar, .inline-filter-toolbar) > * {
+  flex: 0 0 auto;
+}
+
+:where(.toolbar, .filter-bar, .inline-filter-toolbar) :where(.ant-space) {
+  align-items: center;
+  display: inline-flex;
+  flex-wrap: nowrap !important;
+}
+
+:where(.toolbar, .filter-bar, .inline-filter-toolbar) :where(.ant-space-item) {
+  flex: 0 0 auto;
+}

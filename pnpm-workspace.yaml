@@ -26,8 +26,6 @@ catalog:
   '@changesets/cli': ^2.30.0
   '@changesets/git': ^3.0.4
   '@clack/prompts': ^1.1.0
-  '@commitlint/cli': ^20.5.0
-  '@commitlint/config-conventional': ^20.5.0
   '@ctrl/tinycolor': ^4.2.0
   '@eslint-community/eslint-plugin-eslint-comments': ^4.7.1
   '@eslint/js': ^10.0.1
@@ -80,12 +78,9 @@ catalog:
   circular-dependency-scanner: ^3.0.1
   class-variance-authority: ^0.7.1
   clsx: ^2.1.1
-  commitlint-plugin-function-rules: ^4.3.2
   consola: ^3.4.2
   cross-env: ^10.1.0
   cspell: ^9.7.0
-  cz-git: ^1.12.0
-  czg: ^1.12.0
   dayjs: ^1.11.20
   defu: ^6.1.4
   depcheck: ^1.4.7
@@ -111,10 +106,8 @@ catalog:
   h3: ^1.15.10
   happy-dom: ^20.8.4
   html-minifier-terser: ^7.2.0
-  is-ci: ^4.1.0
   json-bigint: ^1.0.0
   jsonwebtoken: ^9.0.3
-  lefthook: ^2.1.4
   lodash.clonedeep: ^4.5.0
   lucide-vue-next: ^0.577.0
   medium-zoom: ^1.1.0
@@ -122,9 +115,6 @@ catalog:
   nitropack: ^2.13.2
   nprogress: ^0.2.0
   ora: ^9.3.0
-  oxfmt: ^0.41.0
-  oxlint: ^1.56.0
-  oxlint-tsgolint: ^0.17.1
   pinia: ^3.0.4
   pinia-plugin-persistedstate: ^4.7.1
   pkg-types: ^2.3.0

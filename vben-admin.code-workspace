@@ -9,20 +9,8 @@
       "path": "docs"
     },
     {
-      "name": "@vben/commitlint-config",
-      "path": "internal/lint-configs/commitlint-config"
-    },
-    {
       "name": "@vben/eslint-config",
       "path": "internal/lint-configs/eslint-config"
-    },
-    {
-      "name": "@vben/oxfmt-config",
-      "path": "internal/lint-configs/oxfmt-config"
-    },
-    {
-      "name": "@vben/oxlint-config",
-      "path": "internal/lint-configs/oxlint-config"
     },
     {
       "name": "@vben/stylelint-config",

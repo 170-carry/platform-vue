@@ -93,11 +93,10 @@ pnpm dev
 │  ○ @vben/web-ele
 │  ○ @vben/web-naive
 │  ○ @vben/docs
-│  ● @vben/playground
 └
 ```
 
-现在，你可以在浏览器访问 `http://localhost:5555` 查看项目。
+现在，你可以在浏览器访问终端输出的地址查看项目；当前主业务应用默认端口是 `http://localhost:5999`。
 
 #### 运行指定项目
 

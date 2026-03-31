@@ -6,7 +6,6 @@ The repository uses Monorepo management, and the project structure is as follows
 .
 ├── README.md # Project documentation
 ├── apps # Project applications directory
-│   ├── backend-mock # Backend mock service application
 │   ├── web-antd # Frontend application based on Ant Design Vue
 │   ├── web-antdv-next # Frontend application based on Ant Design Vue Next
 │   ├── web-ele # Frontend application based on Element Plus
@@ -58,7 +57,6 @@ The repository uses Monorepo management, and the project structure is as follows
 │   ├── styles # Styles
 │   ├── types # Type definitions
 │   └── utils # Utilities
-├── playground # Demo directory
 ├── pnpm-lock.yaml # pnpm lock file
 ├── pnpm-workspace.yaml # pnpm workspace configuration file
 ├── scripts # Scripts directory

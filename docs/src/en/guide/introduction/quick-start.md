@@ -89,8 +89,7 @@ You will see an output similar to the following, allowing you to select the proj
 │  ○ @vben/web-ele
 │  ○ @vben/web-naive
 │  ○ @vben/docs
-│  ○ @vben/playground
 └
 ```
 
-Now, you can visit `http://localhost:5555` in your browser to view the project.
+Now, open the URL printed by the terminal in your browser. In this workspace, the main business application uses `http://localhost:5999` by default.

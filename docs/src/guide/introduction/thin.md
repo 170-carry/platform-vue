@@ -22,22 +22,13 @@ apps/web-naive
 
 :::
 
-## 演示代码精简
-
-如果你不需要演示代码，你可以直接删除 `playground` 文件夹。
-
 ## 文档精简
 
 如果你不需要文档，你可以直接删除`docs`文件夹。
 
 ## Mock 服务精简
 
-如果你不需要`Mock`服务，你可以直接删除`apps/backend-mock`文件夹。同时在你的应用下`.env.development`文件中删除`VITE_NITRO_MOCK`变量。
-
-```bash
-# 是否开启 Nitro Mock服务，true 为开启，false 为关闭
-VITE_NITRO_MOCK=false
-```
+当前工作区未内置 `Mock` 服务，无需额外移除。
 
 ## 安装依赖
 
@@ -61,11 +52,9 @@ pnpm install
     "build:ele": "pnpm run build --filter=@vben/web-ele",
     "build:naive": "pnpm run build --filter=@vben/web-naive",
     "build:tdesign": "pnpm run build --filter=@vben/web-tdesign",
-    "build:play": "pnpm run build --filter=@vben/playground",
     "dev:antd": "pnpm -F @vben/web-antd run dev",
     "dev:docs": "pnpm -F @vben/docs run dev",
     "dev:ele": "pnpm -F @vben/web-ele run dev",
-    "dev:play": "pnpm -F @vben/playground run dev",
     "dev:naive": "pnpm -F @vben/web-naive run dev"
   }
 }

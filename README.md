@@ -1,6 +1,6 @@
 # Frontend
 
-`Frontend/` 是 AppPlatform 的前端工作区，采用 `pnpm workspace + Turbo` 的 monorepo 组织方式。当前目录同时承载主业务应用、能力演示、文档站、Mock 服务以及一组共享包和工程脚本。
+`Frontend/` 是 AppPlatform 的前端工作区，采用 `pnpm workspace + Turbo` 的 monorepo 组织方式。当前目录主要承载主业务应用、文档站、一组共享包和工程脚本。
 
 项目整体基于 Vue 3 技术栈，并延续 `Vue Vben Admin v5` 的分层方式做业务化扩展。
 
@@ -14,8 +14,6 @@
 - Turbo
 - pnpm workspace
 - VitePress
-- Playwright
-- Nitro Mock
 - Ant Design Vue / antdv-next
 
 ## 2. 工作区结构
@@ -23,9 +21,7 @@
 ```text
 Frontend/
 ├── apps/                主业务应用（数据平台）
-├── playground/          示例应用、能力演示、E2E 验证入口
 ├── docs/                VitePress 文档站
-├── backend-mock/        Nitro Mock 服务
 ├── packages/            业务与框架共享包
 ├── internal/            内部工程配置与构建基础设施
 ├── scripts/             CLI 与部署脚本
@@ -58,23 +54,7 @@ Frontend/
 - `adapter`：表单、组件等适配层
 - `locales`：国际化资源
 
-### 3.2 playground
-
-演示与验证用应用，包名为 `@vben/playground`。
-
-- 默认开发端口为 `5555`
-- 开发态接口前缀为 `/api`
-- 代理目标为 `http://localhost:5320/api`
-- 默认开启 `VITE_NITRO_MOCK=true`
-- 内置 Playwright E2E，配置位于 `playground/playwright.config.ts`
-
-适合用于：
-
-- 验证基础能力包是否可用
-- 编写和运行 E2E 用例
-- 调试通用组件、布局、示例页面
-
-### 3.3 docs
+### 3.2 docs
 
 文档站应用，包名为 `@vben/docs`，基于 VitePress。
 
@@ -82,15 +62,7 @@ Frontend/
 - 同时提供中文与英文站点
 - 首页内容位于 `docs/src/index.md` 和 `docs/src/en/index.md`
 
-### 3.4 backend-mock
-
-Mock 服务包名为 `@vben/backend-mock`，基于 Nitro。
-
-- 默认端口来自 `backend-mock/.env`，当前为 `5320`
-- 提供前端开发期所需的接口、鉴权、上传等模拟能力
-- 按现有说明，通常由开发流程集成启用，不一定需要单独常驻手动启动
-
-### 3.5 packages
+### 3.3 packages
 
 共享包分为几层：
 
@@ -108,7 +80,7 @@ Mock 服务包名为 `@vben/backend-mock`，基于 Nitro。
 - `packages/constants|icons|locales|preferences|stores|styles|types|utils`
   - 面向应用的共享常量、样式、类型、工具与状态能力
 
-### 3.6 internal
+### 3.4 internal
 
 内部工程基础设施，不直接承载业务页面：
 
@@ -118,7 +90,7 @@ Mock 服务包名为 `@vben/backend-mock`，基于 Nitro。
 - `internal/tailwind-config`：Tailwind 配置
 - `internal/node-utils`：Node 侧工具能力
 
-### 3.7 scripts
+### 3.5 scripts
 
 工程脚本目录：
 
@@ -156,9 +128,6 @@ pnpm dev
 # 启动主业务应用
 pnpm dev:antdv-next
 
-# 启动 playground
-pnpm dev:play
-
 # 启动文档站
 pnpm dev:docs
 ```
@@ -171,9 +140,6 @@ pnpm build
 
 # 构建主应用
 pnpm build:antdv-next
-
-# 构建 playground
-pnpm build:play
 
 # 构建文档站
 pnpm build:docs
@@ -195,8 +161,6 @@ pnpm check
 # 单元测试
 pnpm test:unit
 
-# E2E 测试
-pnpm test:e2e
 ```
 
 ## 5. 环境变量与运行时约定
@@ -210,27 +174,11 @@ pnpm test:e2e
 - `VITE_APP_STORE_SECURE_KEY`：持久化加密密钥
 - `VITE_PORT`：开发端口
 - `VITE_GLOB_API_URL`：接口基地址
-- `VITE_NITRO_MOCK`：是否启用 Nitro Mock
 
 当前开发环境关键值：
 
 - 端口：`5999`
 - 接口：`http://127.0.0.1:2700/console`
-- Mock：`false`
-
-### 5.2 playground
-
-当前开发环境关键值：
-
-- 端口：`5555`
-- 接口：`/api`
-- Mock：`true`
-
-### 5.3 backend-mock
-
-- `PORT=5320`
-- `ACCESS_TOKEN_SECRET`
-- `REFRESH_TOKEN_SECRET`
 
 ## 6. 全局工程约定
 
@@ -252,8 +200,8 @@ pnpm test:e2e
 4. `apps/package.json`
 5. `apps/src/main.ts`
 6. `apps/src/bootstrap.ts`
-7. `playground/package.json`
-8. `backend-mock/README.md`
+7. `docs/.vitepress/config/index.mts`
+8. `internal/vite-config/src/config/application.ts`
 
 ## 8. 补充说明
 

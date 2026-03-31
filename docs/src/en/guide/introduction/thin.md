@@ -18,22 +18,13 @@ If your project doesn’t include the `UI` component library you need, you can d
 
 :::
 
-## Demo Code Slimming
-
-If you don’t need demo code, you can simply delete the `playground` folder
-
 ## Documentation Slimming
 
 If you don’t need documentation, you can delete the `docs` folder.
 
 ## Remove Mock Service
 
-If you don’t need the `Mock` service, you can delete the `apps/backend-mock` folder. Also, remove the `VITE_NITRO_MOCK` variable from the `.env.development` file in your application.
-
-```bash
-# Whether to enable Nitro Mock service, true to enable, false to disable
-VITE_NITRO_MOCK=false
-```
+This workspace does not include a built-in `Mock` service, so there is nothing extra to remove here.
 
 ## Installing Dependencies
 
@@ -57,11 +48,9 @@ After slimming down, you may need to adjust commands according to your project. 
     "build:ele": "pnpm run build --filter=@vben/web-ele",
     "build:naive": "pnpm run build --filter=@vben/web-naive",
     "build:tdesign": "pnpm run build --filter=@vben/web-tdesign",
-    "build:play": "pnpm run build --filter=@vben/playground",
     "dev:antd": "pnpm -F @vben/web-antd run dev",
     "dev:docs": "pnpm -F @vben/docs run dev",
     "dev:ele": "pnpm -F @vben/web-ele run dev",
-    "dev:play": "pnpm -F @vben/playground run dev",
     "dev:naive": "pnpm -F @vben/web-naive run dev"
   }
 }

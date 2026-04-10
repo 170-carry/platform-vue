@@ -1,14 +1,17 @@
 <script lang="ts" setup>
-import { reactive, ref, watch } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 
 import {
   OSS_FILE_BUCKETS,
   getAccessImgUrl,
   simpleUploadFile,
 } from '#/api/legacy/oss';
-import { listPayOpenCountry } from '#/api/legacy/pay';
-import { regionConfigTable } from '#/api/legacy/system';
-import { addBanner, updateBanner } from '#/api/legacy/system';
+import {
+  addBanner,
+  getCountryAlls,
+  regionConfigTable,
+  updateBanner,
+} from '#/api/legacy/system';
 import AccountInput from '#/components/account-input.vue';
 
 import {
@@ -44,6 +47,22 @@ const DISPLAY_POSITION_OPTIONS = [
   { name: '首页弹出层', value: 'HOME_ALERT' },
   { name: '钱包', value: 'WALLET' },
   { name: '游戏', value: 'GAME' },
+];
+
+const APP_PLATFORMS = [
+  { label: 'iOS', value: 'iOS' },
+  { label: 'Android', value: 'Android' },
+];
+
+const SHOWCASE_OPTIONS: Array<Record<string, any>> = [
+  { label: '下架', value: false },
+  { label: '上架', value: true },
+];
+
+const TYPE_OPTIONS = [
+  { label: 'H5', value: 'H5' },
+  { label: 'APP', value: 'APP' },
+  { label: 'AD', value: 'AD' },
 ];
 
 const CONTENT_OPTIONS = [
@@ -95,6 +114,20 @@ const countriesLoading = ref(false);
 const regionsLoading = ref(false);
 const form = reactive<Record<string, any>>(createForm());
 
+const regionSelectOptions = computed(() =>
+  regionOptions.value.map((item) => ({
+    label: String(item.regionName || item.id || '-'),
+    value: item.id,
+  })),
+);
+
+const countrySelectOptions = computed(() =>
+  countryOptions.value.map((item) => ({
+    label: String(item.aliasName || item.countryName || item.alphaTwo || '-'),
+    value: item.alphaTwo,
+  })),
+);
+
 const contentSuggestions = () => {
   const keyword = contentKeyword.value.trim().toLowerCase();
   const target = keyword
@@ -140,7 +173,10 @@ watch(
         roomSearchValue.value = String(form.params);
       }
     }
-    void loadCountries();
+    void Promise.all([
+      loadCountries(),
+      sysOrigin ? loadRegions(sysOrigin) : Promise.resolve(),
+    ]);
   },
   { immediate: true },
 );
@@ -170,7 +206,7 @@ watch(
 async function loadCountries() {
   countriesLoading.value = true;
   try {
-    countryOptions.value = await listPayOpenCountry();
+    countryOptions.value = await getCountryAlls();
   } finally {
     countriesLoading.value = false;
   }
@@ -351,9 +387,44 @@ async function submitForm() {
 
       <div class="field">
         <div class="label">状态</div>
-        <SysOriginSelect v-model:value="form.showcase"
+        <Select
+          v-model:value="form.showcase"
+          :options="SHOWCASE_OPTIONS"
+          allow-clear
+          option-label-prop="label"
+          placeholder="请选择状态"
+        />
+      </div>
+
+      <div class="field">
+        <div class="label">平台</div>
+        <Select
+          v-model:value="form.platform"
+          :options="APP_PLATFORMS"
+          allow-clear
+          option-label-prop="label"
+          placeholder="请选择平台"
+        />
+      </div>
+
+      <div class="field">
+        <div class="label">类型</div>
+        <Select
+          v-model:value="form.type"
+          :options="TYPE_OPTIONS"
+          allow-clear
+          option-label-prop="label"
+          placeholder="请选择类型"
+        />
+      </div>
+
+      <div class="field">
+        <div class="label">系统</div>
+        <SysOriginSelect
+          v-model:value="form.sysOrigin"
           :options="sysOriginOptions"
-        ></SysOriginSelect>
+          placeholder="请选择系统"
+        />
       </div>
 
       <div class="field field--full">
@@ -436,37 +507,25 @@ async function submitForm() {
         <div class="label">区域</div>
         <Select option-label-prop="label"
           v-model:value="form.regionList"
+          :options="regionSelectOptions"
           :loading="regionsLoading"
           allow-clear
           mode="multiple"
-        >
-          <SelectOption
-            v-for="item in regionOptions"
-            :key="item.id"
-            :value="item.id"
-           :label="`${item.regionName}`">
-            {{ item.regionName }}
-          </SelectOption>
-        </Select>
+          placeholder="请选择区域"
+        />
       </div>
 
       <div class="field field--full">
         <div class="label">国家</div>
         <Select option-label-prop="label"
           v-model:value="selectCountryCodes"
+          :options="countrySelectOptions"
           :loading="countriesLoading"
           allow-clear
           mode="multiple"
+          placeholder="请选择国家"
           @change="changeCountry"
-        >
-          <SelectOption
-            v-for="item in countryOptions"
-            :key="item.id"
-            :value="item.country?.alphaTwo"
-           :label="`${item.country?.aliasName || item.country?.enName || item.country?.alphaTwo}`">
-            {{ item.country?.aliasName || item.country?.enName || item.country?.alphaTwo }}
-          </SelectOption>
-        </Select>
+        />
       </div>
 
       <div class="field field--full">

@@ -128,7 +128,7 @@ async function uploadFile(file: File) {
 
   try {
     const result = await simpleUploadFile(file, dir, customFilename);
-    item.status = result.res?.status || 200;
+    item.status = 200;
     item.name = result.name || item.name;
     item.url = getAccessImgUrl(result.name || item.name);
   } catch (error) {

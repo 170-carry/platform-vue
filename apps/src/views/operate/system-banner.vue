@@ -8,9 +8,9 @@ import {
 import { Page } from '@vben/common-ui';
 import { useAccessStore } from '@vben/stores';
 
-import { listPayOpenCountry } from '#/api/legacy/pay';
 import {
   bannerTable,
+  getCountryAlls,
   deleteBanner,
   regionConfigTable,
   } from '#/api/legacy/system';
@@ -115,7 +115,7 @@ async function loadRegions(sysOrigin: string) {
 async function loadCountries() {
   countriesLoading.value = true;
   try {
-    countries.value = await listPayOpenCountry();
+    countries.value = await getCountryAlls();
   } finally {
     countriesLoading.value = false;
   }
@@ -236,7 +236,7 @@ function getStatusColor(record: Record<string, any>) {
           style="width: 200px"
           @change="handleSearch"
         
-          :options="countries.map((item) => ({ label: `${item.country?.aliasName || item.country?.enName || item.country?.alphaTwo}`, value: item.country?.alphaTwo as any }))"
+          :options="countries.map((item) => ({ label: `${item.aliasName || item.countryName || item.alphaTwo}`, value: item.alphaTwo as any }))"
         />
         <Button :loading="loading" type="primary" @click="handleSearch">
           搜索

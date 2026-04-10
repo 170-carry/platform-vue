@@ -1,5 +1,3 @@
-import OSS from 'ali-oss';
-
 import { requestClient } from '#/api/request';
 
 export const OSS_FILE_BUCKETS = {
@@ -13,7 +11,6 @@ export const OSS_FILE_BUCKETS = {
   svgasource: 'svgasource',
 } as const;
 
-const OSS_BUCKET = import.meta.env.VITE_GLOB_OSS_BUCKET || 'tkm-likei';
 const OSS_URL = import.meta.env.VITE_GLOB_OSS_URL || '';
 
 export function randomFilename(filename?: string) {
@@ -49,14 +46,23 @@ export async function simpleUploadFile(
   dir: string = OSS_FILE_BUCKETS.other,
   customFilename?: string,
 ) {
-  const stsResult = await getOssSts();
-  const client = new OSS({
-    accessKeyId: stsResult.AccessKeyId,
-    accessKeySecret: stsResult.AccessKeySecret,
-    bucket: OSS_BUCKET,
-    endpoint: 'oss-accelerate.aliyuncs.com',
-    stsToken: stsResult.SecurityToken,
-  });
   const filename = customFilename || randomFilename(file.name);
-  return client.put(`${dir}/${filename}`, file);
+  const formData = new FormData();
+  formData.append('file', file, filename);
+  const result = await requestClient.post<Record<string, string>>(
+    '/ali-yun/oss/upload',
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      params: {
+        dir,
+        filename,
+      },
+    },
+  );
+  return {
+    name: result?.name || '',
+  };
 }

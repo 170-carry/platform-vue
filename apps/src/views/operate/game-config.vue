@@ -29,7 +29,6 @@ import {
   Modal,
   Pagination,
   Select,
-  SelectOption,
   Space,
   Table,
   message,
@@ -93,6 +92,36 @@ const query = reactive<Record<string, any>>({
 });
 
 const form = reactive(createForm());
+const gameOriginOptions = GAME_ORIGIN_OPTIONS.map((item) => ({
+  label: item.name,
+  value: item.value as any,
+}));
+const clientOriginOptions = GAME_CLIENT_ORIGIN_OPTIONS.map((item) => ({
+  label: item.name,
+  value: item.value as any,
+}));
+const categoryOptions = GAME_CATEGORY_OPTIONS.map((item) => ({
+  label: item.name,
+  value: item.value as any,
+}));
+const gameModeOptions = GAME_MODE_OPTIONS.map((item) => ({
+  label: item.name,
+  value: item.value as any,
+}));
+const booleanOptions = [
+  { label: '是', value: true as any },
+  { label: '否', value: false as any },
+];
+const showcaseOptions = [
+  { label: '下架', value: false as any },
+  { label: '上架', value: true as any },
+];
+const regionSelectOptions = computed(() =>
+  regions.value.map((item) => ({
+    label: String(item.regionName || item.id || '-'),
+    value: item.id as any,
+  })),
+);
 
 const columns = [
   { dataIndex: 'sysOrigin', key: 'sysOrigin', title: '系统', width: 100 },
@@ -126,6 +155,29 @@ watch(
   },
   { immediate: true },
 );
+
+watch(
+  () => form.sysOrigin,
+  async (value) => {
+    if (!modalOpen.value || !value) {
+      return;
+    }
+    regions.value = await regionConfigTable({ sysOrigin: value });
+  },
+);
+
+function normalizeMultiValue(value: any) {
+  if (Array.isArray(value)) {
+    return value.filter((item) => item !== '' && item !== null && item !== undefined);
+  }
+  if (value === '' || value === null || value === undefined) {
+    return [];
+  }
+  return String(value)
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
 
 async function loadData(reset = false) {
   if (reset) {
@@ -173,11 +225,10 @@ function openEdit(record: Record<string, any>) {
     gameMode: record.gameMode,
     gameOrigin: record.gameOrigin || query.gameOrigin,
     id: String(record.id || ''),
-    regionList:
-      record.regionList ||
-      record.regions?.map((item: Record<string, any>) => item.id) ||
-      [],
-    self: record.self === true,
+    regionList: normalizeMultiValue(
+      record.regionList || record.regions?.map((item: Record<string, any>) => item.id),
+    ),
+    self: record.self === true || Boolean(record.selfGameCode),
     selfGameCode: record.selfGameCode || '',
     showcase: record.showcase,
     sort: Number(record.sort || 0),
@@ -358,32 +409,29 @@ void loadData(true);
           />
         </FormItem>
         <FormItem label="游戏源">
-          <Select option-label-prop="label" v-model:value="form.gameOrigin">
-            <SelectOption
-              v-for="item in GAME_ORIGIN_OPTIONS"
-              :key="item.value"
-              :value="item.value"
-             :label="`${item.name}`">
-              {{ item.name }}
-            </SelectOption>
-          </Select>
+          <Select
+            v-model:value="form.gameOrigin"
+            :options="gameOriginOptions"
+            option-label-prop="label"
+            placeholder="请选择游戏源"
+          />
         </FormItem>
         <FormItem label="客户端">
-          <Select option-label-prop="label" v-model:value="form.clientOrigin">
-            <SelectOption
-              v-for="item in GAME_CLIENT_ORIGIN_OPTIONS"
-              :key="item.value"
-              :value="item.value"
-             :label="`${item.name}`">
-              {{ item.name }}
-            </SelectOption>
-          </Select>
+          <Select
+            v-model:value="form.clientOrigin"
+            :options="clientOriginOptions"
+            option-label-prop="label"
+            placeholder="请选择客户端"
+          />
         </FormItem>
         <FormItem label="是否自研">
-          <Select option-label-prop="label" v-model:value="form.self" allow-clear>
-            <SelectOption :value="true" label="是">是</SelectOption>
-            <SelectOption :value="false" label="否">否</SelectOption>
-          </Select>
+          <Select
+            v-model:value="form.self"
+            :options="booleanOptions"
+            allow-clear
+            option-label-prop="label"
+            placeholder="请选择是否自研"
+          />
         </FormItem>
         <FormItem v-if="form.self" label="自研游戏Code">
           <Input v-model:value="form.selfGameCode" placeholder="请输入自研游戏Code" />
@@ -392,15 +440,12 @@ void loadData(true);
           <Input v-model:value="form.gameId" placeholder="请输入游戏ID" />
         </FormItem>
         <FormItem label="游戏分类">
-          <Select option-label-prop="label" v-model:value="form.category">
-            <SelectOption
-              v-for="item in GAME_CATEGORY_OPTIONS"
-              :key="item.value"
-              :value="item.value"
-             :label="`${item.name}`">
-              {{ item.name }}
-            </SelectOption>
-          </Select>
+          <Select
+            v-model:value="form.category"
+            :options="categoryOptions"
+            option-label-prop="label"
+            placeholder="请选择游戏分类"
+          />
         </FormItem>
         <FormItem label="名称">
           <Input v-model:value="form.name" placeholder="请输入名称" />
@@ -412,21 +457,22 @@ void loadData(true);
           <Input v-model:value="form.amounts" placeholder="金币必须是整数多个逗号隔开" />
         </FormItem>
         <FormItem label="是否全屏">
-          <Select option-label-prop="label" v-model:value="form.fullScreen" allow-clear>
-            <SelectOption :value="true" label="是">是</SelectOption>
-            <SelectOption :value="false" label="否">否</SelectOption>
-          </Select>
+          <Select
+            v-model:value="form.fullScreen"
+            :options="booleanOptions"
+            allow-clear
+            option-label-prop="label"
+            placeholder="请选择是否全屏"
+          />
         </FormItem>
         <FormItem label="游戏模式">
-          <Select option-label-prop="label" v-model:value="form.gameMode" allow-clear>
-            <SelectOption
-              v-for="item in GAME_MODE_OPTIONS"
-              :key="item.value"
-              :value="item.value"
-             :label="`${item.name}`">
-              {{ item.name }}
-            </SelectOption>
-          </Select>
+          <Select
+            v-model:value="form.gameMode"
+            :options="gameModeOptions"
+            allow-clear
+            option-label-prop="label"
+            placeholder="请选择游戏模式"
+          />
         </FormItem>
         <FormItem label="宽">
           <Input v-model:value="form.width" placeholder="宽度" />
@@ -435,24 +481,25 @@ void loadData(true);
           <Input v-model:value="form.height" placeholder="高度" />
         </FormItem>
         <FormItem label="状态">
-          <Select option-label-prop="label" v-model:value="form.showcase" allow-clear>
-            <SelectOption :value="false" label="下架">下架</SelectOption>
-            <SelectOption :value="true" label="上架">上架</SelectOption>
-          </Select>
+          <Select
+            v-model:value="form.showcase"
+            :options="showcaseOptions"
+            allow-clear
+            option-label-prop="label"
+            placeholder="请选择状态"
+          />
         </FormItem>
         <FormItem label="排序">
           <InputNumber v-model:value="form.sort" :max="99999" :min="0" style="width: 100%" />
         </FormItem>
         <FormItem label="区域">
-          <Select option-label-prop="label" v-model:value="form.regionList" mode="multiple">
-            <SelectOption
-              v-for="item in regions"
-              :key="item.id"
-              :value="item.id"
-             :label="`${item.regionName}`">
-              {{ item.regionName }}
-            </SelectOption>
-          </Select>
+          <Select
+            v-model:value="form.regionList"
+            :options="regionSelectOptions"
+            mode="multiple"
+            option-label-prop="label"
+            placeholder="请选择区域"
+          />
         </FormItem>
       </Form>
     </Modal>

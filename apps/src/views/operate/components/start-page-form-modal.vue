@@ -17,7 +17,6 @@ import {
   Image,
   Modal,
   Select,
-  SelectOption,
   message,
 } from 'antdv-next';
 
@@ -36,6 +35,10 @@ const APP_START_PAGE_PLAN_TYPES = [
   { name: '游戏王', value: 'KING_GAMES' },
   { name: 'CP', value: 'CP' },
 ];
+const APP_START_PAGE_PLAN_TYPE_OPTIONS = APP_START_PAGE_PLAN_TYPES.map((item) => ({
+  label: item.name,
+  value: item.value as any,
+}));
 
 function createForm() {
   return {
@@ -163,15 +166,12 @@ async function submitForm() {
 
       <div class="field">
         <div class="label">类型</div>
-        <Select option-label-prop="label" v-model:value="form.type">
-          <SelectOption
-            v-for="item in APP_START_PAGE_PLAN_TYPES"
-            :key="item.value"
-            :value="item.value"
-           :label="`${item.name}`">
-            {{ item.name }}
-          </SelectOption>
-        </Select>
+        <Select
+          v-model:value="form.type"
+          :options="APP_START_PAGE_PLAN_TYPE_OPTIONS"
+          option-label-prop="label"
+          placeholder="请选择活动类型"
+        />
       </div>
 
       <div class="field">

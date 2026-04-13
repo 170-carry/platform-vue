@@ -6,7 +6,7 @@ import { useAccessStore } from '@vben/stores';
 import { listRoomPk } from '#/api/legacy/game';
 import { getAllowedSysOrigins } from '#/views/system/shared';
 
-import { Alert, Button, Select, SelectOption, Table } from 'antdv-next';
+import { Alert, Button, Select, Table } from 'antdv-next';
 
 import RoomDetailsDrawer from '#/views/app-system/components/room-details-drawer.vue';
 
@@ -26,6 +26,10 @@ const sysOriginOptions = computed(() => {
   const options = getAllowedSysOrigins(accessStore.accessCodes || []);
   return options.length > 0 ? options : getAllowedSysOrigins([]);
 });
+const pkTypeOptions = PK_TYPE_OPTIONS.map((item) => ({
+  label: item.label,
+  value: item.value as any,
+}));
 
 const loading = ref(false);
 const loadMoreLoading = ref(false);
@@ -179,17 +183,10 @@ function handleRecipientRoomFail() {
       ></SysOriginSelect>
       <Select option-label-prop="label"
         v-model:value="query.pkType"
+        :options="pkTypeOptions"
         style="width: 140px"
         @change="handleSearch"
-      >
-        <SelectOption
-          v-for="item in PK_TYPE_OPTIONS"
-          :key="item.value"
-          :value="item.value"
-         :label="`${item.label}`">
-          {{ item.label }}
-        </SelectOption>
-      </Select>
+      />
       <AccountInput
         v-model:value="query.sponsorUserId"
         :sys-origin="query.sysOrigin"

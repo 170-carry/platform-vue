@@ -25,7 +25,6 @@ import {
   Image,
   Input,
   Select,
-  SelectOption,
   Space,
   Spin,
   Switch,
@@ -87,9 +86,47 @@ const previousStandardId = ref<number | string>('');
 const previewCover = computed(() => getAccessImgUrl(form.giftPhoto));
 const previewSource = computed(() => getAccessImgUrl(form.giftSourceUrl));
 const title = computed(() => (form.id ? '编辑礼物' : '新增礼物'));
+const regionOptions = computed(() =>
+  regions.value.map((item) => ({
+    label: String(item.regionName || item.name || item.id || '-'),
+    value: item.id as any,
+  })),
+);
+const giftTabOptions = GIFT_CONFIG_TAB_OPTIONS.map((item) => ({
+  label: item.name,
+  value: item.value as any,
+}));
+const chargeTypeOptions = [
+  { label: '金币', value: 'GOLD' },
+  { label: '钻石', value: 'DIAMOND' },
+  { disabled: true, label: '免费', value: 'FREE' },
+];
+const specialOptions = GIFT_SPECIAL_OPTIONS.map((item) => ({
+  label: item.name,
+  value: item.value as any,
+}));
+const standardSelectOptions = computed(() =>
+  standardOptions.value.map((item) => ({
+    label: String(item.name || item.label || item.value || item.id || '-'),
+    value: (item.value || item.id) as any,
+  })),
+);
 const isLuckyOrMagic = computed(
   () => form.giftTab === 'LUCKY_GIFT' || form.giftTab === 'MAGIC',
 );
+
+function normalizeMultiValue(value: any) {
+  if (Array.isArray(value)) {
+    return value.filter((item) => item !== '' && item !== null && item !== undefined);
+  }
+  if (value === '' || value === null || value === undefined) {
+    return [];
+  }
+  return String(value)
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
 
 function resetForm() {
   Object.assign(form, createForm(props.sysOrigin));
@@ -120,16 +157,8 @@ watch(
       Object.assign(form, {
         ...props.row,
         explanationGift: Boolean(props.row.explanationGift),
-        regionList: props.row.regions
-          ? String(props.row.regions)
-              .split(',')
-              .filter(Boolean)
-          : props.row.regionList || [],
-        specialList: props.row.special
-          ? String(props.row.special)
-              .split(',')
-              .filter(Boolean)
-          : props.row.specialList || [],
+        regionList: normalizeMultiValue(props.row.regions || props.row.regionList),
+        specialList: normalizeMultiValue(props.row.special || props.row.specialList),
         sysOrigin: props.row.sysOrigin || props.sysOrigin,
       });
       previousStandardId.value = props.row.standardId || '';
@@ -296,17 +325,12 @@ async function handleSubmit() {
               </Button>
               <Select option-label-prop="label"
                 v-model:value="form.regionList"
+                :options="regionOptions"
                 mode="multiple"
+                placeholder="请选择区域"
+                show-search
                 style="width: 100%"
-              >
-                <SelectOption
-                  v-for="item in regions"
-                  :key="item.id"
-                  :value="item.id"
-                 :label="`${item.regionName}`">
-                  {{ item.regionName }}
-                </SelectOption>
-              </Select>
+              />
             </Space>
           </FormItem>
         </div>
@@ -331,36 +355,32 @@ async function handleSubmit() {
 
         <div class="grid">
           <FormItem label="礼物类型">
-            <Select option-label-prop="label" v-model:value="form.giftTab">
-              <SelectOption
-                v-for="item in GIFT_CONFIG_TAB_OPTIONS"
-                :key="item.value"
-                :value="item.value"
-               :label="`${item.name}`">
-                {{ item.name }}
-              </SelectOption>
-            </Select>
+            <Select
+              v-model:value="form.giftTab"
+              :options="giftTabOptions"
+              option-label-prop="label"
+              placeholder="请选择礼物类型"
+            />
           </FormItem>
           <FormItem label="收费类型">
-            <Select option-label-prop="label" v-model:value="form.type">
-              <SelectOption value="GOLD" label="金币">金币</SelectOption>
-              <SelectOption value="DIAMOND" label="钻石">钻石</SelectOption>
-              <SelectOption value="FREE" disabled label="免费">免费</SelectOption>
-            </Select>
+            <Select
+              v-model:value="form.type"
+              :options="chargeTypeOptions"
+              option-label-prop="label"
+              placeholder="请选择收费类型"
+            />
           </FormItem>
         </div>
 
         <div class="grid">
           <FormItem label="特效">
-            <Select option-label-prop="label" v-model:value="form.specialList" mode="multiple">
-              <SelectOption
-                v-for="item in GIFT_SPECIAL_OPTIONS"
-                :key="item.value"
-                :value="item.value"
-               :label="`${item.name}`">
-                {{ item.name }}
-              </SelectOption>
-            </Select>
+            <Select
+              v-model:value="form.specialList"
+              :options="specialOptions"
+              mode="multiple"
+              option-label-prop="label"
+              placeholder="请选择特效"
+            />
           </FormItem>
           <FormItem label="排序">
             <Input v-model:value="form.sort" />
@@ -414,15 +434,12 @@ async function handleSubmit() {
 
         <div class="grid" v-if="isLuckyOrMagic">
           <FormItem label="幸运规格">
-            <Select option-label-prop="label" v-model:value="form.standardId">
-              <SelectOption
-                v-for="item in standardOptions"
-                :key="item.value || item.id"
-                :value="item.value || item.id"
-               :label="`${item.name}`">
-                {{ item.name }}
-              </SelectOption>
-            </Select>
+            <Select
+              v-model:value="form.standardId"
+              :options="standardSelectOptions"
+              option-label-prop="label"
+              placeholder="请选择幸运规格"
+            />
           </FormItem>
         </div>
 

@@ -9,7 +9,6 @@ import {
   Input,
   Pagination,
   Select,
-  SelectOption,
   Space,
   Table,
 } from 'antdv-next';
@@ -47,6 +46,11 @@ const columns = [
   { dataIndex: 'shelfStatus', key: 'shelfStatus', title: '状态', width: 100 },
   { dataIndex: 'actions', key: 'actions', title: '操作', width: 100 },
 ];
+
+const shelfStatusOptions = PROPS_SHELF_STATUS_OPTIONS.map((item) => ({
+  label: item.name,
+  value: item.value as any,
+}));
 
 async function loadData(reset = false) {
   if (!props.open || !query.sysOrigin) {
@@ -96,20 +100,15 @@ watch(
     @close="emit('close')"
   >
     <Space class="toolbar" wrap>
-      <Select option-label-prop="label"
+      <Select
         v-model:value="query.shelfStatus"
         allow-clear
+        :options="shelfStatusOptions"
+        option-label-prop="label"
+        placeholder="请选择状态"
         style="width: 120px"
         @change="loadData(true)"
-      >
-        <SelectOption
-          v-for="item in PROPS_SHELF_STATUS_OPTIONS"
-          :key="String(item.value)"
-          :value="item.value"
-         :label="`${item.name}`">
-          {{ item.name }}
-        </SelectOption>
-      </Select>
+      />
       <Input
         v-model:value="query.id"
         allow-clear

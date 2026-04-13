@@ -12,7 +12,6 @@ import {
   Input,
   Modal,
   Select,
-  SelectOption,
   message,
 } from 'antdv-next';
 
@@ -112,15 +111,11 @@ async function handleSubmit() {
         <Input v-model:value="form.auth" />
       </FormItem>
       <FormItem label="分组">
-        <Select option-label-prop="label" v-model:value="form.groupName">
-          <SelectOption
-            v-for="item in GROUP_OPTIONS"
-            :key="item.value"
-            :value="item.value"
-           :label="`${item.label}`">
-            {{ item.label }}
-          </SelectOption>
-        </Select>
+        <Select
+          v-model:value="form.groupName"
+          :options="GROUP_OPTIONS"
+          option-label-prop="label"
+        />
       </FormItem>
     </Form>
   </Modal>

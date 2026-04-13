@@ -30,7 +30,6 @@ import {
   Modal,
   Pagination,
   Select,
-  SelectOption,
   Space,
   Switch,
   Table,
@@ -81,6 +80,11 @@ const sellerWaterList = ref<Array<Record<string, any>>>([]);
 const sellerWaterTotal = ref(0);
 const sellerWaterLoading = ref(false);
 const modalMode = ref<ModalMode>('create');
+
+const freightRechargeTypeOptions = FREIGHT_RECHARGE_TYPE_OPTIONS.map((item) => ({
+  label: item.name,
+  value: item.value as any,
+}));
 
 const query = reactive<Record<string, any>>({
   close: undefined,
@@ -506,15 +510,12 @@ void loadData(true);
           <Input v-model:value="modalForm.amount" placeholder="请输入金额" />
         </FormItem>
         <FormItem v-if="modalMode !== 'deduct'" label="充值类型">
-          <Select option-label-prop="label" v-model:value="modalForm.rechargeType" allow-clear>
-            <SelectOption
-              v-for="item in FREIGHT_RECHARGE_TYPE_OPTIONS"
-              :key="item.value"
-              :value="item.value"
-             :label="`${item.name}`">
-              {{ item.name }}
-            </SelectOption>
-          </Select>
+          <Select
+            v-model:value="modalForm.rechargeType"
+            allow-clear
+            :options="freightRechargeTypeOptions"
+            option-label-prop="label"
+          />
         </FormItem>
         <FormItem label="备注">
           <Input v-model:value="modalForm.remark" placeholder="请输入备注" />

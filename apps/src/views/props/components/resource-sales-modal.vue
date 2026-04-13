@@ -77,7 +77,11 @@ watch(
     if (!open) {
       return;
     }
-    query.sysOrigin = sysOriginOptions.value[0]?.value || 'LIKEI';
+    query.sysOrigin =
+      props.record?.sysOrigin ||
+      props.record?.commodity?.sysOrigin ||
+      sysOriginOptions.value[0]?.value ||
+      'LIKEI';
     query.date = dayjs().format('YYYYMM');
     query.propsSourceId = String(props.record?.id || '');
     void loadData();

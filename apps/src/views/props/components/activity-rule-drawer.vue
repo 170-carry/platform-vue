@@ -18,7 +18,6 @@ import {
   Image,
   Input,
   Select,
-  SelectOption,
   Space,
   Switch,
   message,
@@ -82,6 +81,26 @@ const luckyBoxRules = computed<Array<Record<string, any>>>(() =>
 );
 const tips = computed(() => PROP_ACTIVITY_TYPE_HELP[form.activityType] || {});
 const title = computed(() => (isUpdate.value ? '修改规则' : '新增规则'));
+const activityTypeOptions = PROP_ACTIVITY_TYPES.map((item) => ({
+  label: item.name,
+  value: item.value as any,
+}));
+const productOptions = computed(() =>
+  products.value.map((item) => ({
+    label: `${item.unitPrice || '-'} / ${item.productId} / ${item.description || '-'}`,
+    value: item.productId as any,
+  })),
+);
+const crystalLevelOptions = [1, 2, 3, 4, 5].map((level) => ({
+  label: `${level}`,
+  value: level as any,
+}));
+const gameOptions = computed(() =>
+  games.value.map((item) => ({
+    label: item.name || '-',
+    value: item.id as any,
+  })),
+);
 
 function resetForm() {
   form.activityType = '';
@@ -327,16 +346,9 @@ async function handleSubmit() {
         <Select option-label-prop="label"
           v-model:value="form.activityType"
           :disabled="isUpdate"
+          :options="activityTypeOptions"
           @change="handleActivityTypeChange"
-        >
-          <SelectOption
-            v-for="item in PROP_ACTIVITY_TYPES"
-            :key="item.value"
-            :value="item.value"
-           :label="`${item.name}`">
-            {{ item.name }}
-          </SelectOption>
-        </Select>
+        />
       </FormItem>
 
       <template v-if="form.activityType">
@@ -349,19 +361,10 @@ async function handleSubmit() {
             <Select option-label-prop="label"
               v-model:value="ruleState.productId"
               :loading="productsLoading"
+              :options="productOptions"
               option-filter-prop="label"
               show-search
-            >
-              <SelectOption
-                v-for="item in products"
-                :key="item.productId"
-                :label="`${item.unitPrice || '-'} ${item.productId}`"
-                :value="item.productId"
-              >
-                {{ item.unitPrice || '-' }} / {{ item.productId }} /
-                {{ item.description || '-' }}
-              </SelectOption>
-            </Select>
+            />
           </FormItem>
         </template>
 
@@ -385,11 +388,11 @@ async function handleSubmit() {
 
         <template v-else-if="isCrystal">
           <FormItem :label="tips.level || '等级'">
-            <Select option-label-prop="label" v-model:value="ruleState.level">
-              <SelectOption v-for="level in [1, 2, 3, 4, 5]" :key="level" :value="level" :label="`${level}`">
-                {{ level }}
-              </SelectOption>
-            </Select>
+            <Select
+              option-label-prop="label"
+              v-model:value="ruleState.level"
+              :options="crystalLevelOptions"
+            />
           </FormItem>
           <FormItem :label="tips.milestone || '里程碑'">
             <Input v-model:value="ruleState.milestone" />
@@ -453,18 +456,10 @@ async function handleSubmit() {
             <Select option-label-prop="label"
               v-model:value="ruleState.gameConfId"
               :loading="gamesLoading"
+              :options="gameOptions"
               option-filter-prop="label"
               show-search
-            >
-              <SelectOption
-                v-for="item in games"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              >
-                {{ item.name }}
-              </SelectOption>
-            </Select>
+            />
           </FormItem>
           <FormItem label="目标">
             <Input v-model:value="ruleState.target" />

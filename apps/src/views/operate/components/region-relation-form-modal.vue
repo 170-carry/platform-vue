@@ -11,7 +11,6 @@ import {
   FormItem,
   Modal,
   Select,
-  SelectOption,
   message,
 } from 'antdv-next';
 
@@ -46,6 +45,25 @@ const form = reactive<Record<string, any>>({
   showcase: true,
   sysOrigin: '',
 });
+
+const regionSelectOptions = computed(() =>
+  props.regions.map((item) => ({
+    label: String(item.regionName || item.id || '-'),
+    value: item.id as any,
+  })),
+);
+
+const countrySelectOptions = computed(() =>
+  props.countryList.map((item) => ({
+    label: String(item.country?.countryName || item.country?.aliasName || item.id || '-'),
+    value: item.id as any,
+  })),
+);
+
+const showcaseOptions = PRODUCT_SHOWCASE_OPTIONS.map((item) => ({
+  label: item.name,
+  value: item.value as any,
+}));
 
 const singleRelationId = computed({
   get: () => form.relationIds[0],
@@ -124,53 +142,33 @@ async function handleSubmit() {
   >
     <Form layout="vertical">
       <FormItem label="区域">
-        <Select option-label-prop="label" v-model:value="form.regionId">
-          <SelectOption
-            v-for="item in regions"
-            :key="item.id"
-            :value="item.id"
-           :label="`${item.regionName}`">
-            {{ item.regionName }}
-          </SelectOption>
-        </Select>
+        <Select
+          v-model:value="form.regionId"
+          :options="regionSelectOptions"
+          option-label-prop="label"
+        />
       </FormItem>
       <FormItem label="开通国家">
-        <Select option-label-prop="label"
+        <Select
           v-if="form.id"
           v-model:value="singleRelationId"
-        >
-          <SelectOption
-            v-for="item in countryList"
-            :key="item.id"
-            :value="item.id"
-           :label="`${item.country?.countryName || item.country?.aliasName || '-'}`">
-            {{ item.country?.countryName || item.country?.aliasName || '-' }}
-          </SelectOption>
-        </Select>
-        <Select option-label-prop="label"
+          :options="countrySelectOptions"
+          option-label-prop="label"
+        />
+        <Select
           v-else
           v-model:value="form.relationIds"
+          :options="countrySelectOptions"
           mode="multiple"
-        >
-          <SelectOption
-            v-for="item in countryList"
-            :key="item.id"
-            :value="item.id"
-           :label="`${item.country?.countryName || item.country?.aliasName || '-'}`">
-            {{ item.country?.countryName || item.country?.aliasName || '-' }}
-          </SelectOption>
-        </Select>
+          option-label-prop="label"
+        />
       </FormItem>
       <FormItem label="状态">
-        <Select option-label-prop="label" v-model:value="form.showcase">
-          <SelectOption
-            v-for="item in PRODUCT_SHOWCASE_OPTIONS"
-            :key="String(item.value)"
-            :value="item.value"
-           :label="`${item.name}`">
-            {{ item.name }}
-          </SelectOption>
-        </Select>
+        <Select
+          v-model:value="form.showcase"
+          :options="showcaseOptions"
+          option-label-prop="label"
+        />
       </FormItem>
     </Form>
   </Modal>

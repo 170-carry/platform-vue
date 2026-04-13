@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { reactive, ref, watch } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 
 import { getByGroupId } from '#/api/legacy/props';
 import {
@@ -22,7 +22,6 @@ import {
   Modal,
   Pagination,
   Select,
-  SelectOption,
   Space,
   Table,
   Tag,
@@ -100,6 +99,13 @@ const columns = [
   { dataIndex: 'createTime', key: 'createTime', title: '创建时间', width: 180 },
   { dataIndex: 'actions', key: 'actions', title: '操作', width: 240 },
 ];
+
+const gameAwardSelectOptions = computed(() =>
+  images.value.map((item) => ({
+    label: String(item.id || '-'),
+    value: String(item.id || ''),
+  })),
+);
 
 function getTaskTypeLabel(value?: string) {
   return TASK_TYPE_OPTIONS.find((item) => item.value === value)?.label || value || '-';
@@ -358,15 +364,13 @@ function handlePageChange(page: number, pageSize: number) {
           <Input :value="form.sysOrigin" disabled />
         </FormItem>
         <FormItem label="挑战的任务">
-          <Select option-label-prop="label" v-model:value="form.taskType" allow-clear placeholder="任务类型">
-            <SelectOption
-              v-for="item in TASK_TYPE_OPTIONS"
-              :key="item.value"
-              :value="item.value"
-             :label="`${item.label}`">
-              {{ item.label }}
-            </SelectOption>
-          </Select>
+          <Select
+            v-model:value="form.taskType"
+            allow-clear
+            :options="TASK_TYPE_OPTIONS"
+            option-label-prop="label"
+            placeholder="任务类型"
+          />
         </FormItem>
         <FormItem label="排序">
           <Input v-model:value="form.sort" placeholder="排序" />
@@ -386,19 +390,13 @@ function handlePageChange(page: number, pageSize: number) {
           v-if="['WINNING_ONE_OF_THE_PRIZES_ONE', 'WINNING_ONE_OF_THE_PRIZES_TWO'].includes(form.taskType)"
           label="奖项"
         >
-          <Select option-label-prop="label"
+          <Select
             v-model:value="form.gameAwardId"
+            :options="gameAwardSelectOptions"
             mode="multiple"
+            option-label-prop="label"
             placeholder="请选择奖项"
-          >
-            <SelectOption
-              v-for="item in images"
-              :key="item.id"
-              :value="String(item.id)"
-             :label="`${item.id}`">
-              {{ item.id }}
-            </SelectOption>
-          </Select>
+          />
           <div v-if="form.gameAwardId.length > 0" class="award-preview">
             <div
               v-for="item in images.filter((option) => form.gameAwardId.includes(String(option.id)))"

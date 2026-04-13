@@ -22,7 +22,6 @@ import {
   Input,
   Modal,
   Select,
-  SelectOption,
   TextArea,
   message,
 } from 'antdv-next';
@@ -42,11 +41,11 @@ const emit = defineEmits<{
 }>();
 
 const DISPLAY_POSITION_OPTIONS = [
-  { name: '房间内', value: 'ROOM' },
-  { name: '发现页', value: 'EXPLORE_PAGE' },
-  { name: '首页弹出层', value: 'HOME_ALERT' },
-  { name: '钱包', value: 'WALLET' },
-  { name: '游戏', value: 'GAME' },
+  { label: '房间内', value: 'ROOM' },
+  { label: '发现页', value: 'EXPLORE_PAGE' },
+  { label: '首页弹出层', value: 'HOME_ALERT' },
+  { label: '钱包', value: 'WALLET' },
+  { label: '游戏', value: 'GAME' },
 ];
 
 const APP_PLATFORMS = [
@@ -143,6 +142,19 @@ const contentSuggestions = () => {
   }));
 };
 
+function normalizeMultiValue(value: any) {
+  if (Array.isArray(value)) {
+    return value.filter((item) => item !== '' && item !== null && item !== undefined);
+  }
+  if (value === '' || value === null || value === undefined) {
+    return [];
+  }
+  return String(value)
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
 watch(
   () => ({ open: props.open, row: props.row, sysOrigin: props.sysOrigin }),
   ({ open, row, sysOrigin }) => {
@@ -154,21 +166,9 @@ watch(
     selectCountryCodes.value = [];
     if (row) {
       Object.assign(form, row);
-      form.displayPosition = row.displayPosition
-        ? String(row.displayPosition)
-            .split(',')
-            .filter(Boolean)
-        : [];
-      form.regionList = row.regions
-        ? String(row.regions)
-            .split(',')
-            .filter(Boolean)
-        : [];
-      selectCountryCodes.value = row.countryCode
-        ? String(row.countryCode)
-            .split(',')
-            .filter(Boolean)
-        : [];
+      form.displayPosition = normalizeMultiValue(row.displayPosition);
+      form.regionList = normalizeMultiValue(row.regions || row.regionList);
+      selectCountryCodes.value = normalizeMultiValue(row.countryCode);
       if (form.content === 'ENTER_ROOM' && form.params) {
         roomSearchValue.value = String(form.params);
       }
@@ -467,15 +467,13 @@ async function submitForm() {
 
       <div class="field field--full">
         <div class="label">展示位</div>
-        <Select option-label-prop="label" v-model:value="form.displayPosition" mode="multiple">
-          <SelectOption
-            v-for="item in DISPLAY_POSITION_OPTIONS"
-            :key="item.value"
-            :value="item.value"
-           :label="`${item.name}`">
-            {{ item.name }}
-          </SelectOption>
-        </Select>
+        <Select
+          v-model:value="form.displayPosition"
+          :options="DISPLAY_POSITION_OPTIONS"
+          mode="multiple"
+          option-label-prop="label"
+          placeholder="请选择展示位"
+        />
       </div>
 
       <div class="field">

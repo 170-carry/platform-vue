@@ -15,7 +15,6 @@ import {
   Input,
   Pagination,
   Select,
-  SelectOption,
   Switch,
   Table,
 } from 'antdv-next';
@@ -62,6 +61,39 @@ const title = computed(() => (props.mode === 'country' ? '商品管理' : '商�
 const dimensionPlaceholder = computed(() =>
   props.mode === 'country' ? '国家' : '区域',
 );
+const productTypeOptions = WEB_PRODUCT_TYPE_OPTIONS.map((item) => ({
+  label: item.name,
+  value: item.value as any,
+}));
+const applicationOptions = computed(() =>
+  (props.appInfo?.appList || []).map((item: Record<string, any>) => ({
+    label: item.appName || '-',
+    value: item.id as any,
+  })),
+);
+const supportOptions = computed(() =>
+  supportList.value.map((item) => ({
+    label:
+      props.mode === 'country'
+        ? item.country?.aliasName || item.country?.enName || '-'
+        : item.regionName || '-',
+    value: item.id as any,
+  })),
+);
+const shelfOptions = [
+  { label: '上架', value: true as any },
+  { label: '下架', value: false as any },
+];
+const selectedDimensionId = computed({
+  get: () => (props.mode === 'country' ? query.payCountryId : query.regionId),
+  set: (value) => {
+    if (props.mode === 'country') {
+      query.payCountryId = value;
+      return;
+    }
+    query.regionId = value;
+  },
+});
 
 const columns = computed(() => {
   const listColumns: any[] = [
@@ -236,56 +268,31 @@ function openEdit(record: Record<string, any>) {
     <div class="toolbar">
       <Select option-label-prop="label"
         v-model:value="query.type"
+        :options="productTypeOptions"
         style="width: 180px"
         @change="handleSearch"
-      >
-        <SelectOption
-          v-for="item in WEB_PRODUCT_TYPE_OPTIONS"
-          :key="item.value"
-          :value="item.value"
-         :label="`${item.name}`">
-          {{ item.name }}
-        </SelectOption>
-      </Select>
+      />
       <Select option-label-prop="label"
         v-model:value="query.applicationId"
+        :options="applicationOptions"
         placeholder="应用"
         style="width: 200px"
         @change="handleApplicationChange"
-      >
-        <SelectOption
-          v-for="item in appInfo.appList || []"
-          :key="item.id"
-          :value="item.id"
-         :label="`${item.appName}`">
-          {{ item.appName }}
-        </SelectOption>
-      </Select>
+      />
       <Select option-label-prop="label"
-        v-model:value="props.mode === 'country' ? query.payCountryId : query.regionId"
+        v-model:value="selectedDimensionId"
         :loading="supportLoading"
+        :options="supportOptions"
         :placeholder="dimensionPlaceholder"
         style="width: 200px"
         @change="handleDimensionChange"
-      >
-        <SelectOption
-          v-for="item in supportList"
-          :key="item.id"
-          :value="item.id"
-         :label="`${props.mode === 'country' ? item.country?.aliasName || item.country?.enName || '-' : item.regionName || '-'}`">
-          {{ props.mode === 'country'
-            ? item.country?.aliasName || item.country?.enName || '-'
-            : item.regionName || '-' }}
-        </SelectOption>
-      </Select>
+      />
       <Select option-label-prop="label"
         v-model:value="query.shelf"
+        :options="shelfOptions"
         style="width: 140px"
         @change="handleSearch"
-      >
-        <SelectOption :value="true" label="上架">上架</SelectOption>
-        <SelectOption :value="false" label="下架">下架</SelectOption>
-      </Select>
+      />
       <Input
         v-model:value="query.id"
         placeholder="商品ID"

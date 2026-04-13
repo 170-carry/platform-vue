@@ -29,7 +29,6 @@ import {
   Radio,
   RadioGroup,
   Select,
-  SelectOption,
   TextArea,
   message,
 } from 'antdv-next';
@@ -123,6 +122,12 @@ const cancelRestoreForm = reactive({
 });
 
 const canExecuteUserSwap = computed(() => !userSwapBlocked.value);
+const countryOptions = computed(() =>
+  countries.value.map((item) => ({
+    label: `${item.aliasName || '-'} / ${item.alphaTwo || '-'}`,
+    value: item.id as any,
+  })),
+);
 
 function prettyJson(value: any) {
   try {
@@ -361,15 +366,11 @@ void loadCountries();
         <Form layout="vertical">
           <div class="grid three">
             <FormItem label="签名平台">
-              <Select option-label-prop="label" v-model:value="apiSignForm.platform">
-                <SelectOption
-                  v-for="item in ORIGIN_PLATFORM_OPTIONS"
-                  :key="item.value"
-                  :value="item.value"
-                 :label="`${item.label}`">
-                  {{ item.label }}
-                </SelectOption>
-              </Select>
+              <Select
+                option-label-prop="label"
+                v-model:value="apiSignForm.platform"
+                :options="ORIGIN_PLATFORM_OPTIONS"
+              />
             </FormItem>
             <FormItem label="签名KEY">
               <Input v-model:value="apiSignForm.key" />
@@ -450,19 +451,11 @@ void loadCountries();
             <FormItem label="国家">
               <Select option-label-prop="label"
                 v-model:value="roomRegionForm.countryId"
+                :options="countryOptions"
                 show-search
                 :filter-option="filterCountry"
                 placeholder="请选择国家"
-              >
-                <SelectOption
-                  v-for="item in countries"
-                  :key="item.id"
-                  :label="`${item.aliasName || '-'} / ${item.alphaTwo || '-'}`"
-                  :value="item.id"
-                >
-                  {{ item.aliasName || '-' }} / {{ item.alphaTwo || '-' }}
-                </SelectOption>
-              </Select>
+              />
             </FormItem>
           </div>
           <FormItem>

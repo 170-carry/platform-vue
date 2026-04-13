@@ -19,7 +19,6 @@ import {
   Input,
   Modal,
   Select,
-  SelectOption,
   Switch,
   message,
 } from 'antdv-next';
@@ -74,6 +73,14 @@ const isSourceRequired = computed(
 );
 const showExpandUpload = computed(() => form.type === 'CHAT_BUBBLE');
 const title = computed(() => (isUpdate.value ? '修改资源' : '新增资源'));
+const propsTypeOptions = PROPS_TYPES.map((item) => ({
+  label: item.name,
+  value: item.value as any,
+}));
+const nobleVipNameOptions = NOBLE_VIP_OPTIONS.map((item) => ({
+  label: item.name,
+  value: item.value as any,
+}));
 
 function resetForm() {
   form.adminFree = false;
@@ -259,15 +266,11 @@ async function handleSubmit() {
         ></SysOriginSelect>
       </FormItem>
       <FormItem label="类型">
-        <Select option-label-prop="label" v-model:value="form.type">
-          <SelectOption
-            v-for="item in PROPS_TYPES"
-            :key="item.value"
-            :value="item.value"
-           :label="`${item.name}`">
-            {{ item.name }}
-          </SelectOption>
-        </Select>
+        <Select
+          option-label-prop="label"
+          v-model:value="form.type"
+          :options="propsTypeOptions"
+        />
       </FormItem>
       <FormItem label="封面">
         <input
@@ -331,15 +334,12 @@ async function handleSubmit() {
         </div>
       </FormItem>
       <FormItem label="名称">
-        <Select option-label-prop="label" v-if="form.type === 'NOBLE_VIP'" v-model:value="form.name">
-          <SelectOption
-            v-for="item in NOBLE_VIP_OPTIONS"
-            :key="item.value"
-            :value="item.value"
-           :label="`${item.name}`">
-            {{ item.name }}
-          </SelectOption>
-        </Select>
+        <Select
+          v-if="form.type === 'NOBLE_VIP'"
+          option-label-prop="label"
+          v-model:value="form.name"
+          :options="nobleVipNameOptions"
+        />
         <Input v-else v-model:value="form.name" />
       </FormItem>
       <FormItem v-if="!isUpdate" label="编码">

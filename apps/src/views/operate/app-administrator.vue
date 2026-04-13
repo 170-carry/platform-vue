@@ -19,7 +19,6 @@ import {
   Modal,
   Pagination,
   Select,
-  SelectOption,
   Space,
   Table,
   Tabs,
@@ -39,6 +38,10 @@ const ROLE_OPTIONS = [
   { label: '管理员', value: 'ADMIN' },
   { label: '超级管理员', value: 'SUPER_ADMIN' },
   { label: '经理', value: 'MANAGER' },
+];
+const STATUS_OPTIONS = [
+  { label: '正常', value: 1 as any },
+  { label: '禁用', value: 0 as any },
 ];
 
 const GROUP_LABELS: Record<string, string> = {
@@ -252,34 +255,25 @@ loadResourceList();
             <template v-else-if="column.key === 'status'">
               <Select option-label-prop="label"
                 :value="record.status"
+                :options="STATUS_OPTIONS"
                 style="width: 100px"
                 @change="(value) => {
                   record.status = value;
                   handleStatusChange(record, Number(value) === 1);
                 }"
-              >
-                <SelectOption :value="1" label="正常">正常</SelectOption>
-                <SelectOption :value="0" label="禁用">禁用</SelectOption>
-              </Select>
+              />
             </template>
             <template v-else-if="column.key === 'roles'">
               <Select option-label-prop="label"
                 :loading="record.id === roleLoadingId"
                 :value="record.roles"
+                :options="ROLE_OPTIONS"
                 style="width: 130px"
                 @change="(value) => {
                   record.roles = value;
                   handleRoleChange(record, value);
                 }"
-              >
-                <SelectOption
-                  v-for="item in ROLE_OPTIONS"
-                  :key="item.value"
-                  :value="item.value"
-                 :label="`${item.label}`">
-                  {{ item.label }}
-                </SelectOption>
-              </Select>
+              />
             </template>
             <template v-else-if="column.key === 'createTime'">
               {{ formatDate(record.createTime) }}

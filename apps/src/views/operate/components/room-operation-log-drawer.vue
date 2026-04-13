@@ -10,7 +10,6 @@ import {
   Empty,
   Modal,
   Select,
-  SelectOption,
   Space,
   Tag,
 } from 'antdv-next';
@@ -30,6 +29,10 @@ const loading = ref(false);
 const detailsOpen = ref(false);
 const list = ref<Array<Record<string, any>>>([]);
 const jsonText = ref('');
+const apiRequestLogOptions = API_REQUEST_LOGS.map((item) => ({
+  label: item.label,
+  value: item.value as any,
+}));
 
 const query = reactive({
   businessCode: '',
@@ -87,17 +90,10 @@ function openDetails(record: Record<string, any>) {
       <Select option-label-prop="label"
         v-model:value="query.businessCode"
         allow-clear
+        :options="apiRequestLogOptions"
         placeholder="业务CODE"
         style="width: 260px"
-      >
-        <SelectOption
-          v-for="item in API_REQUEST_LOGS"
-          :key="item.value"
-          :value="item.value"
-         :label="`${item.label}`">
-          {{ item.label }}
-        </SelectOption>
-      </Select>
+      />
       <Button :loading="loading" type="primary" @click="loadData">
         搜索
       </Button>

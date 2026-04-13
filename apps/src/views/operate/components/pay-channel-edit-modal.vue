@@ -16,7 +16,6 @@ import {
   Input,
   Modal,
   Select,
-  SelectOption,
   message,
 } from 'antdv-next';
 
@@ -36,6 +35,11 @@ const emit = defineEmits<{
   close: [];
   success: [];
 }>();
+
+const payChannelGroupOptions = PAY_CHANNEL_GROUP_OPTIONS.map((item) => ({
+  label: item.name,
+  value: item.value as any,
+}));
 
 const fileInputRef = ref<HTMLInputElement | null>(null);
 const loading = ref(false);
@@ -136,15 +140,11 @@ async function handleSubmit() {
   >
     <Form layout="vertical">
       <FormItem label="类型">
-        <Select option-label-prop="label" v-model:value="form.channelType">
-          <SelectOption
-            v-for="item in PAY_CHANNEL_GROUP_OPTIONS"
-            :key="item.value"
-            :value="item.value"
-           :label="`${item.name}`">
-            {{ item.name }}
-          </SelectOption>
-        </Select>
+        <Select
+          v-model:value="form.channelType"
+          :options="payChannelGroupOptions"
+          option-label-prop="label"
+        />
       </FormItem>
       <FormItem label="Code">
         <Input v-model:value="form.channelCode" :disabled="Boolean(form.id)" />

@@ -12,7 +12,6 @@ import {
   Input,
   Modal,
   Select,
-  SelectOption,
   Switch,
   message,
 } from 'antdv-next';
@@ -77,6 +76,31 @@ const form = reactive<Record<string, any>>({
 
 const title = computed(() => (form.id ? '修改商品' : '新增商品'));
 const isNobleVip = computed(() => form.propsType === 'NOBLE_VIP');
+const propsStoreTypeOptions = PROPS_STORE_TYPES.map((item) => ({
+  label: item.name,
+  value: item.value as any,
+}));
+const currencyTypeOptions = computed(() =>
+  PROPS_CURRENCY_TYPES.map((item) => ({
+    disabled: isNobleVip.value && item.value !== 'GOLD',
+    label: item.name,
+    value: item.value as any,
+  })),
+);
+const validDayOptions = PROPS_VALID_DAYS.map((item) => ({
+  label: item.name,
+  value: item.value as any,
+}));
+const nobleVipOptions = NOBLE_VIP_OPTIONS.map((item) => ({
+  label: item.name,
+  value: item.value as any,
+}));
+
+function resetSourceOptionsMap() {
+  Object.keys(sourceOptionsMap).forEach((key) => {
+    delete sourceOptionsMap[key];
+  });
+}
 
 function createTypeStore(type: string) {
   if (!sourceOptionsMap[type]) {
@@ -130,6 +154,7 @@ watch(
     if (!open) {
       return;
     }
+    resetSourceOptionsMap();
     resetSelections();
     const record = props.record || {};
     const commodity = record.commodity || record;
@@ -206,6 +231,13 @@ function updateSelectedSource(type: string, id: string | number) {
     chatBubbleSource.value = item || null;
     form.propsAbility.chatBubbleId = id;
   }
+}
+
+function getSourceSelectOptions(type: string) {
+  return (sourceOptionsMap[type]?.list || []).map((item) => ({
+    label: `${item.id} / ${item.name}`,
+    value: item.id as any,
+  }));
 }
 
 function validateForm() {
@@ -297,15 +329,12 @@ async function handleSubmit() {
           ></SysOriginSelect>
         </FormItem>
         <FormItem label="道具类型">
-          <Select option-label-prop="label" v-model:value="form.propsType" disabled>
-            <SelectOption
-              v-for="item in PROPS_STORE_TYPES"
-              :key="item.value"
-              :value="item.value"
-             :label="`${item.name}`">
-              {{ item.name }}
-            </SelectOption>
-          </Select>
+          <Select
+            option-label-prop="label"
+            v-model:value="form.propsType"
+            :options="propsStoreTypeOptions"
+            disabled
+          />
         </FormItem>
       </div>
 
@@ -313,19 +342,11 @@ async function handleSubmit() {
         <Select option-label-prop="label"
           v-model:value="form.sourceId"
           :loading="sourceOptionsMap[form.propsType]?.loading"
+          :options="getSourceSelectOptions(form.propsType)"
           option-filter-prop="label"
           show-search
           @change="(value: string) => updateSelectedSource(form.propsType, value)"
-        >
-          <SelectOption
-            v-for="item in sourceOptionsMap[form.propsType]?.list || []"
-            :key="item.id"
-            :label="`${item.id} ${item.name}`"
-            :value="item.id"
-          >
-            {{ item.id }} / {{ item.name }}
-          </SelectOption>
-        </Select>
+        />
         <div v-if="mainSource" class="source-preview">
           <RewardIcon :item="mainSource" :size="56" />
           <div class="source-preview__meta">
@@ -337,27 +358,20 @@ async function handleSubmit() {
 
       <div class="form-grid">
         <FormItem label="付费类型">
-          <Select option-label-prop="label" v-model:value="form.tmpCurrencyTypes" mode="multiple">
-            <SelectOption
-              v-for="item in PROPS_CURRENCY_TYPES"
-              :key="item.value"
-              :disabled="isNobleVip && item.value !== 'GOLD'"
-              :value="item.value"
-             :label="`${item.name}`">
-              {{ item.name }}
-            </SelectOption>
-          </Select>
+          <Select
+            option-label-prop="label"
+            v-model:value="form.tmpCurrencyTypes"
+            :options="currencyTypeOptions"
+            mode="multiple"
+          />
         </FormItem>
         <FormItem label="有效天数">
-          <Select option-label-prop="label" v-model:value="form.tmpValidDays" mode="multiple">
-            <SelectOption
-              v-for="item in PROPS_VALID_DAYS"
-              :key="item.value"
-              :value="item.value"
-             :label="`${item.name}`">
-              {{ item.name }}
-            </SelectOption>
-          </Select>
+          <Select
+            option-label-prop="label"
+            v-model:value="form.tmpValidDays"
+            :options="validDayOptions"
+            mode="multiple"
+          />
         </FormItem>
       </div>
 
@@ -388,15 +402,11 @@ async function handleSubmit() {
 
         <div class="form-grid">
           <FormItem label="VIP类型">
-            <Select option-label-prop="label" v-model:value="form.propsAbility.vipType">
-              <SelectOption
-                v-for="item in NOBLE_VIP_OPTIONS"
-                :key="item.value"
-                :value="item.value"
-               :label="`${item.name}`">
-                {{ item.name }}
-              </SelectOption>
-            </Select>
+            <Select
+              option-label-prop="label"
+              v-model:value="form.propsAbility.vipType"
+              :options="nobleVipOptions"
+            />
           </FormItem>
           <FormItem label="VIP等级">
             <Input v-model:value="form.propsAbility.vipLevel" />
@@ -422,19 +432,11 @@ async function handleSubmit() {
             <Select option-label-prop="label"
               v-model:value="form.propsAbility.carId"
               :loading="sourceOptionsMap.RIDE?.loading"
+              :options="getSourceSelectOptions('RIDE')"
               option-filter-prop="label"
               show-search
               @change="(value: string) => updateSelectedSource('RIDE', value)"
-            >
-              <SelectOption
-                v-for="item in sourceOptionsMap.RIDE?.list || []"
-                :key="item.id"
-                :label="`${item.id} ${item.name}`"
-                :value="item.id"
-              >
-                {{ item.id }} / {{ item.name }}
-              </SelectOption>
-            </Select>
+            />
             <div v-if="rideSource" class="source-preview">
               <RewardIcon :item="rideSource" :size="48" />
               <div class="source-preview__meta">
@@ -448,19 +450,11 @@ async function handleSubmit() {
             <Select option-label-prop="label"
               v-model:value="form.propsAbility.avatarFrameId"
               :loading="sourceOptionsMap.AVATAR_FRAME?.loading"
+              :options="getSourceSelectOptions('AVATAR_FRAME')"
               option-filter-prop="label"
               show-search
               @change="(value: string) => updateSelectedSource('AVATAR_FRAME', value)"
-            >
-              <SelectOption
-                v-for="item in sourceOptionsMap.AVATAR_FRAME?.list || []"
-                :key="item.id"
-                :label="`${item.id} ${item.name}`"
-                :value="item.id"
-              >
-                {{ item.id }} / {{ item.name }}
-              </SelectOption>
-            </Select>
+            />
             <div v-if="avatarSource" class="source-preview">
               <RewardIcon :item="avatarSource" :size="48" />
               <div class="source-preview__meta">
@@ -474,19 +468,11 @@ async function handleSubmit() {
             <Select option-label-prop="label"
               v-model:value="form.propsAbility.dataCardId"
               :loading="sourceOptionsMap.DATA_CARD?.loading"
+              :options="getSourceSelectOptions('DATA_CARD')"
               option-filter-prop="label"
               show-search
               @change="(value: string) => updateSelectedSource('DATA_CARD', value)"
-            >
-              <SelectOption
-                v-for="item in sourceOptionsMap.DATA_CARD?.list || []"
-                :key="item.id"
-                :label="`${item.id} ${item.name}`"
-                :value="item.id"
-              >
-                {{ item.id }} / {{ item.name }}
-              </SelectOption>
-            </Select>
+            />
             <div v-if="dataCardSource" class="source-preview">
               <RewardIcon :item="dataCardSource" :size="48" />
               <div class="source-preview__meta">
@@ -500,19 +486,11 @@ async function handleSubmit() {
             <Select option-label-prop="label"
               v-model:value="form.propsAbility.chatBubbleId"
               :loading="sourceOptionsMap.CHAT_BUBBLE?.loading"
+              :options="getSourceSelectOptions('CHAT_BUBBLE')"
               option-filter-prop="label"
               show-search
               @change="(value: string) => updateSelectedSource('CHAT_BUBBLE', value)"
-            >
-              <SelectOption
-                v-for="item in sourceOptionsMap.CHAT_BUBBLE?.list || []"
-                :key="item.id"
-                :label="`${item.id} ${item.name}`"
-                :value="item.id"
-              >
-                {{ item.id }} / {{ item.name }}
-              </SelectOption>
-            </Select>
+            />
             <div v-if="chatBubbleSource" class="source-preview">
               <RewardIcon :item="chatBubbleSource" :size="48" />
               <div class="source-preview__meta">

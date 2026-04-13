@@ -24,7 +24,6 @@ import {
   Modal,
   Pagination,
   Select,
-  SelectOption,
   Space,
   Table,
   Tabs,
@@ -469,15 +468,12 @@ watch(
       @ok="handleBadgeSubmit"
     >
       <Space direction="vertical" style="width: 100%">
-        <Select option-label-prop="label" v-model:value="badgeForm.type" placeholder="类型">
-          <SelectOption
-            v-for="item in badgeTypeOptions"
-            :key="item.value"
-            :value="item.value"
-           :label="`${item.label}`">
-            {{ item.label }}
-          </SelectOption>
-        </Select>
+        <Select
+          v-model:value="badgeForm.type"
+          :options="badgeTypeOptions"
+          option-label-prop="label"
+          placeholder="类型"
+        />
         <Input v-model:value="badgeForm.badgeName" placeholder="徽章名称" />
         <Input v-model:value="badgeForm.badgeKey" placeholder="徽章Key" />
         <Input v-model:value="badgeForm.badgeLevel" placeholder="等级" />

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { reactive, ref, watch } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 
 import {
   addActivityConf,
@@ -18,7 +18,6 @@ import {
   FormItem,
   Input,
   Select,
-  SelectOption,
   Space,
   Tabs,
   TabPane,
@@ -70,6 +69,18 @@ const rewardTarget = ref<'butOneRewards' | 'butTwoRewards'>('butOneRewards');
 const rewardIndex = ref(-1);
 
 const isClose = ref(false);
+
+const showcaseOptions = [
+  { label: '下架', value: false as any },
+  { label: '上架', value: true as any },
+];
+
+const templateSelectOptions = computed(() =>
+  templateOptions.value.map((item) => ({
+    label: String(item.name || item.templateName || item.id || '-'),
+    value: item.id as any,
+  })),
+);
 
 function resetForm() {
   Object.assign(form, createForm());
@@ -357,20 +368,15 @@ async function handleSubmit() {
             <Input :value="sysOrigin" disabled />
           </FormItem>
           <FormItem label="模版">
-            <Select option-label-prop="label"
+            <Select
               v-model:value="form.templateId"
+              :options="templateSelectOptions"
               :disabled="isClose"
               :loading="templateLoading"
+              option-label-prop="label"
+              placeholder="请选择模版"
               show-search
-            >
-              <SelectOption
-                v-for="item in templateOptions"
-                :key="item.id"
-                :value="item.id"
-               :label="`${item.name}`">
-                {{ item.name }}
-              </SelectOption>
-            </Select>
+            />
           </FormItem>
         </div>
 
@@ -386,10 +392,13 @@ async function handleSubmit() {
 
         <div class="grid">
           <FormItem label="状态">
-            <Select option-label-prop="label" v-model:value="form.showcase" :disabled="isClose">
-              <SelectOption :value="false" label="下架">下架</SelectOption>
-              <SelectOption :value="true" label="上架">上架</SelectOption>
-            </Select>
+            <Select
+              v-model:value="form.showcase"
+              :disabled="isClose"
+              :options="showcaseOptions"
+              option-label-prop="label"
+              placeholder="请选择状态"
+            />
           </FormItem>
           <FormItem label="备注">
             <TextArea

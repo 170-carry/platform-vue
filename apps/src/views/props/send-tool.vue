@@ -22,7 +22,6 @@ import {
   Input,
   Row,
   Select,
-  SelectOption,
   message,
 } from 'antdv-next';
 
@@ -46,6 +45,23 @@ const sysOriginOptions = computed(() => {
 const propsTypeOptions = PROPS_TYPES.filter(
   (item) => item.value !== 'CUSTOMIZE' && item.value !== 'FRAGMENTS',
 );
+const propsSecondaryTypeOptions = propsTypeOptions.map((item) => ({
+  label: item.name,
+  value: item.value as any,
+}));
+const badgeTypeOptions = BADGE_TYPE_OPTIONS.map((item) => ({
+  label: item.name,
+  value: item.value as any,
+}));
+const ticketTypeOptions = PROPS_TICKET_TYPES.map((item) => ({
+  label: item.name,
+  value: item.value as any,
+}));
+const vipOriginOptions = [
+  { label: '系统赠送', value: 'SYSTEM_GIVE' as any },
+  { label: '购买或朋友赠送', value: 'BUY_OR_GIVE' as any },
+  { label: '活动奖励', value: 'ACTIVITY_AWARD' as any },
+];
 
 const propsFormLoading = ref(false);
 const badgeFormLoading = ref(false);
@@ -62,6 +78,24 @@ const ticketSourceOptions = ref<Array<Record<string, any>>>([]);
 const propsSelectedResource = ref<Record<string, any> | null>(null);
 const badgeSelectedResource = ref<Record<string, any> | null>(null);
 const ticketSelectedResource = ref<Record<string, any> | null>(null);
+const propsResourceOptions = computed(() =>
+  propsSourceOptions.value.map((item) => ({
+    label: `${item.id} / ${item.name}`,
+    value: item.id as any,
+  })),
+);
+const badgeResourceOptions = computed(() =>
+  badgeSourceOptions.value.map((item) => ({
+    label: `${item.badgeConfigId} / ${item.name}`,
+    value: item.badgeConfigId as any,
+  })),
+);
+const ticketResourceOptions = computed(() =>
+  ticketSourceOptions.value.map((item) => ({
+    label: `${item.id} / ${item.name}`,
+    value: item.id as any,
+  })),
+);
 
 const propsForm = reactive({
   content: '',
@@ -363,28 +397,19 @@ async function handleSendTicket() {
                 v-model:value="propsForm.secondaryType"
                 placeholder="请选择类型"
                 @change="loadPropsSources"
-              
-                :options="propsTypeOptions.map((item) => ({ label: `${item.name}`, value: item.value as any }))"
+                :options="propsSecondaryTypeOptions"
               />
             </FormItem>
             <FormItem label="选择资源">
               <Select option-label-prop="label"
                 v-model:value="propsForm.content"
                 :loading="propsSourceLoading"
+                :options="propsResourceOptions"
                 option-filter-prop="label"
                 placeholder="请选择资源"
                 show-search
                 @change="handlePropsResourceChange"
-              >
-                <SelectOption
-                  v-for="item in propsSourceOptions"
-                  :key="item.id"
-                  :label="`${item.id} ${item.name}`"
-                  :value="item.id"
-                >
-                  {{ item.id }} / {{ item.name }}
-                </SelectOption>
-              </Select>
+              />
               <div v-if="propsSelectedResource" class="resource-preview">
                 <RewardIcon :item="propsSelectedResource" :size="64" />
                 <div class="resource-preview__meta">
@@ -399,11 +424,11 @@ async function handleSendTicket() {
               v-if="propsForm.secondaryType === 'NOBLE_VIP'"
               label="贵族来源"
             >
-              <Select option-label-prop="label" v-model:value="propsForm.vipOrigin">
-                <SelectOption value="SYSTEM_GIVE" label="系统赠送">系统赠送</SelectOption>
-                <SelectOption value="BUY_OR_GIVE" label="购买或朋友赠送">购买或朋友赠送</SelectOption>
-                <SelectOption value="ACTIVITY_AWARD" label="活动奖励">活动奖励</SelectOption>
-              </Select>
+              <Select
+                option-label-prop="label"
+                v-model:value="propsForm.vipOrigin"
+                :options="vipOriginOptions"
+              />
             </FormItem>
             <FormItem label="有效天数">
               <Input
@@ -441,8 +466,7 @@ async function handleSendTicket() {
                 v-model:value="badgeForm.secondaryType"
                 placeholder="请选择类型"
                 @change="loadBadgeSources"
-              
-                :options="BADGE_TYPE_OPTIONS.map((item) => ({ label: `${item.name}`, value: item.value as any }))"
+                :options="badgeTypeOptions"
               />
             </FormItem>
             <FormItem label="选择资源">
@@ -450,20 +474,12 @@ async function handleSendTicket() {
                 option-label-prop="label"
                 v-model:value="badgeForm.content"
                 :loading="badgeSourceLoading"
+                :options="badgeResourceOptions"
                 option-filter-prop="label"
                 placeholder="请选择资源"
                 show-search
                 @change="handleBadgeResourceChange"
-              >
-                <SelectOption
-                  v-for="item in badgeSourceOptions"
-                  :key="item.badgeConfigId"
-                  :label="`${item.badgeConfigId} ${item.name}`"
-                  :value="item.badgeConfigId"
-                >
-                  {{ item.badgeConfigId }} / {{ item.name }}
-                </SelectOption>
-              </Select>
+              />
               <div v-if="badgeSelectedResource" class="resource-preview">
                 <RewardIcon :item="badgeSelectedResource" :size="64" />
                 <div class="resource-preview__meta">
@@ -509,28 +525,19 @@ async function handleSendTicket() {
                 v-model:value="ticketForm.secondaryType"
                 placeholder="请选择类型"
                 @change="loadTicketSources"
-              
-                :options="PROPS_TICKET_TYPES.map((item) => ({ label: `${item.name}`, value: item.value as any }))"
+                :options="ticketTypeOptions"
               />
             </FormItem>
             <FormItem label="选择资源">
               <Select option-label-prop="label"
                 v-model:value="ticketForm.propId"
                 :loading="ticketSourceLoading"
+                :options="ticketResourceOptions"
                 option-filter-prop="label"
                 placeholder="请选择资源"
                 show-search
                 @change="handleTicketResourceChange"
-              >
-                <SelectOption
-                  v-for="item in ticketSourceOptions"
-                  :key="item.id"
-                  :label="`${item.id} ${item.name}`"
-                  :value="item.id"
-                >
-                  {{ item.id }} / {{ item.name }}
-                </SelectOption>
-              </Select>
+              />
               <div v-if="ticketSelectedResource" class="resource-preview">
                 <RewardIcon :item="ticketSelectedResource" :size="64" />
                 <div class="resource-preview__meta">
@@ -545,11 +552,11 @@ async function handleSendTicket() {
               v-if="ticketForm.secondaryType === 'NOBLE_VIP'"
               label="贵族来源"
             >
-              <Select option-label-prop="label" v-model:value="ticketForm.vipOrigin">
-                <SelectOption value="SYSTEM_GIVE" label="系统赠送">系统赠送</SelectOption>
-                <SelectOption value="BUY_OR_GIVE" label="购买或朋友赠送">购买或朋友赠送</SelectOption>
-                <SelectOption value="ACTIVITY_AWARD" label="活动奖励">活动奖励</SelectOption>
-              </Select>
+              <Select
+                option-label-prop="label"
+                v-model:value="ticketForm.vipOrigin"
+                :options="vipOriginOptions"
+              />
             </FormItem>
             <FormItem label="有效天数">
               <Input

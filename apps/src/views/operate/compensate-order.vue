@@ -20,7 +20,6 @@ import {
   Input,
   Modal,
   Select,
-  SelectOption,
   message,
 } from 'antdv-next';
 
@@ -32,6 +31,11 @@ const PAY_PLATFORM_OPTIONS = [
   { disabled: true, label: 'Stripe', value: 'STRIPE' },
   { disabled: true, label: 'PayerMax', value: 'PAY_MAX' },
 ];
+const payPlatformOptions = PAY_PLATFORM_OPTIONS.map((item) => ({
+  disabled: item.disabled,
+  label: item.label,
+  value: item.value as any,
+}));
 
 const accessStore = useAccessStore();
 const sysOriginOptions = computed(() => {
@@ -171,16 +175,12 @@ function submitCandyForm() {
             ></SysOriginSelect>
           </FormItem>
           <FormItem label="支付方式">
-            <Select option-label-prop="label" v-model:value="orderForm.platform" placeholder="请选择支付方式">
-              <SelectOption
-                v-for="item in PAY_PLATFORM_OPTIONS"
-                :key="item.value"
-                :disabled="item.disabled"
-                :value="item.value"
-               :label="`${item.label}`">
-                {{ item.label }}
-              </SelectOption>
-            </Select>
+            <Select
+              option-label-prop="label"
+              v-model:value="orderForm.platform"
+              :options="payPlatformOptions"
+              placeholder="请选择支付方式"
+            />
           </FormItem>
           <FormItem label="产品CODE">
             <Input v-model:value="orderForm.productCode" />

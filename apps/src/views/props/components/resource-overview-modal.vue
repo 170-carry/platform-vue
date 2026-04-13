@@ -12,7 +12,6 @@ import {
   DescriptionsItem,
   Modal,
   Select,
-  SelectOption,
   Space,
   Table,
 } from 'antdv-next';
@@ -63,6 +62,14 @@ const datePickerType = computed(
 const dateValueFormat = computed(
   () => ACTIVITY_DATE_TYPE_MAP[query.dateType as keyof typeof ACTIVITY_DATE_TYPE_MAP].format,
 );
+const dateTypeOptions = ACTIVITY_DATE_TYPE_OPTIONS.map((item) => ({
+  label: item.label,
+  value: item.value as any,
+}));
+const propsTypeOptions = PROPS_TYPES.map((item) => ({
+  label: item.name,
+  value: item.value as any,
+}));
 
 async function loadData() {
   if (!props.open || !query.sysOrigin || !query.date || !query.propsType) {
@@ -119,24 +126,20 @@ watch(
       <SysOriginSelect v-model:value="query.sysOrigin" style="width: 140px" @change="loadData"
         :options="sysOriginOptions"
       ></SysOriginSelect>
-      <Select option-label-prop="label" v-model:value="query.dateType" style="width: 120px" @change="loadData">
-        <SelectOption
-          v-for="item in ACTIVITY_DATE_TYPE_OPTIONS"
-          :key="item.value"
-          :value="item.value"
-         :label="`${item.label}`">
-          {{ item.label }}
-        </SelectOption>
-      </Select>
-      <Select option-label-prop="label" v-model:value="query.propsType" style="width: 160px" @change="loadData">
-        <SelectOption
-          v-for="item in PROPS_TYPES"
-          :key="item.value"
-          :value="item.value"
-         :label="`${item.name}`">
-          {{ item.name }}
-        </SelectOption>
-      </Select>
+      <Select
+        option-label-prop="label"
+        v-model:value="query.dateType"
+        :options="dateTypeOptions"
+        style="width: 120px"
+        @change="loadData"
+      />
+      <Select
+        option-label-prop="label"
+        v-model:value="query.propsType"
+        :options="propsTypeOptions"
+        style="width: 160px"
+        @change="loadData"
+      />
       <DatePicker
         v-model:value="query.date"
         :format="dateValueFormat"

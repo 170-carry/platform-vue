@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 import { regionConfigTable } from '#/api/legacy/system';
 
-import { Select, SelectOption } from 'antdv-next';
+import { Select } from 'antdv-next';
 
 const props = withDefaults(
   defineProps<{
@@ -33,6 +33,12 @@ const emit = defineEmits<{
 const loading = ref(false);
 const list = ref<Array<Record<string, any>>>([]);
 const selectValue = ref<any>(props.value);
+const regionOptions = computed(() =>
+  list.value.map((item) => ({
+    label: item.regionName || '-',
+    value: item.id as any,
+  })),
+);
 
 watch(
   () => props.value,
@@ -89,17 +95,10 @@ defineExpose({
     :disabled="disabled"
     :loading="loading"
     :mode="multiple ? 'multiple' : undefined"
+    :options="regionOptions"
     :placeholder="placeholder"
     :show-search="filterable"
     style="width: 100%"
     @change="handleChange"
-  >
-    <SelectOption
-      v-for="item in list"
-      :key="item.id"
-      :value="item.id"
-     :label="`${item.regionName}`">
-      {{ item.regionName }}
-    </SelectOption>
-  </Select>
+  />
 </template>

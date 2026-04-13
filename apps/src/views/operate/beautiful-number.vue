@@ -21,7 +21,6 @@ import {
   Modal,
   Pagination,
   Select,
-  SelectOption,
   Space,
   Table,
   message,
@@ -63,6 +62,11 @@ const query = reactive<Record<string, any>>({
 });
 
 const form = reactive(createForm());
+
+const beautifulNumberSaleOptions = [
+  { label: '不可售卖', value: 0 as any },
+  { label: '可售卖', value: 1 as any },
+];
 
 const columns = [
   { dataIndex: 'userAccount', key: 'userAccount', title: '靓号', width: 140 },
@@ -302,10 +306,12 @@ void loadData(true);
           />
         </FormItem>
         <FormItem label="售卖类型">
-          <Select option-label-prop="label" v-model:value="form.status" placeholder="请选择售卖类型">
-            <SelectOption :value="0" label="不可售卖">不可售卖</SelectOption>
-            <SelectOption :value="1" label="可售卖">可售卖</SelectOption>
-          </Select>
+          <Select
+            v-model:value="form.status"
+            :options="beautifulNumberSaleOptions"
+            option-label-prop="label"
+            placeholder="请选择售卖类型"
+          />
         </FormItem>
         <FormItem label="金币">
           <Input v-model:value="form.gold" placeholder="请输入金币" />

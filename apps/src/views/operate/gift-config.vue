@@ -31,7 +31,6 @@ import {
   Modal,
   Pagination,
   Select,
-  SelectOption,
   Space,
   Switch,
   Table,
@@ -108,6 +107,16 @@ const weekStarForm = reactive({
   sysOrigin: '',
 });
 const weekStarGiftOptions = ref<Array<Record<string, any>>>([]);
+
+function getWeekStarSelectOptions(currentValue: string) {
+  return weekStarGiftOptions.value.map((item) => ({
+    disabled:
+      isWeekStarGiftDisabled(item.id) &&
+      String(currentValue || '') !== String(item.id || ''),
+    label: String(item.giftName || item.id || '-'),
+    value: item.id as any,
+  }));
+}
 
 const cpLoading = ref(false);
 const cpSaving = ref(false);
@@ -541,36 +550,24 @@ async function handleCpSave() {
           disabled
           :options="sysOriginOptions"
         />
-        <Select option-label-prop="label" v-model:value="weekStarForm.giftOne" placeholder="礼物1">
-          <SelectOption
-            v-for="item in weekStarGiftOptions"
-            :key="item.id"
-            :value="item.id"
-            :disabled="isWeekStarGiftDisabled(item.id) && String(weekStarForm.giftOne) !== String(item.id)"
-           :label="`${item.giftName}`">
-            {{ item.giftName }}
-          </SelectOption>
-        </Select>
-        <Select option-label-prop="label" v-model:value="weekStarForm.giftTwo" placeholder="礼物2">
-          <SelectOption
-            v-for="item in weekStarGiftOptions"
-            :key="item.id"
-            :value="item.id"
-            :disabled="isWeekStarGiftDisabled(item.id) && String(weekStarForm.giftTwo) !== String(item.id)"
-           :label="`${item.giftName}`">
-            {{ item.giftName }}
-          </SelectOption>
-        </Select>
-        <Select option-label-prop="label" v-model:value="weekStarForm.giftThree" placeholder="礼物3">
-          <SelectOption
-            v-for="item in weekStarGiftOptions"
-            :key="item.id"
-            :value="item.id"
-            :disabled="isWeekStarGiftDisabled(item.id) && String(weekStarForm.giftThree) !== String(item.id)"
-           :label="`${item.giftName}`">
-            {{ item.giftName }}
-          </SelectOption>
-        </Select>
+        <Select
+          v-model:value="weekStarForm.giftOne"
+          :options="getWeekStarSelectOptions(String(weekStarForm.giftOne || ''))"
+          option-label-prop="label"
+          placeholder="礼物1"
+        />
+        <Select
+          v-model:value="weekStarForm.giftTwo"
+          :options="getWeekStarSelectOptions(String(weekStarForm.giftTwo || ''))"
+          option-label-prop="label"
+          placeholder="礼物2"
+        />
+        <Select
+          v-model:value="weekStarForm.giftThree"
+          :options="getWeekStarSelectOptions(String(weekStarForm.giftThree || ''))"
+          option-label-prop="label"
+          placeholder="礼物3"
+        />
       </Space>
     </Modal>
   </Page>

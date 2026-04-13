@@ -1,15 +1,12 @@
 <script lang="ts" setup>
 import { computed, reactive, ref, watch } from 'vue';
 
-import { useAccessStore } from '@vben/stores';
-
 import {
   OSS_FILE_BUCKETS,
   getAccessImgUrl,
   simpleUploadFile,
 } from '#/api/legacy/oss';
 import { addMikeType, updateMikeType } from '#/api/legacy/mike';
-import { getAllowedSysOrigins } from '#/views/system/shared';
 
 import {
   Button,
@@ -19,7 +16,6 @@ import {
   Input,
   Modal,
   Select,
-  SelectOption,
   message,
 } from 'antdv-next';
 
@@ -35,6 +31,16 @@ const MIKE_TYPE_OPTIONS = [
   { label: '特殊麦位', value: 'SPECIAL_MIKE' },
   { label: '聚会麦位', value: 'PARTY_MIKE' },
   { label: '尊贵麦位', value: 'HONORABLE_MIKE' },
+];
+
+const SHOWCASE_OPTIONS = [
+  { label: '上架', value: true as any },
+  { label: '下架', value: false as any },
+];
+
+const CHARGE_TYPE_OPTIONS = [
+  { label: '免费', value: 'FREE' as any },
+  { label: '金币', value: 'GOLD' as any },
 ];
 
 const props = withDefaults(
@@ -53,12 +59,6 @@ const emit = defineEmits<{
   close: [];
   success: [];
 }>();
-
-const accessStore = useAccessStore();
-const sysOriginOptions = computed(() => {
-  const options = getAllowedSysOrigins(accessStore.accessCodes || []);
-  return options.length > 0 ? options : getAllowedSysOrigins([]);
-});
 
 const loading = ref(false);
 const mikeCoverLoading = ref(false);
@@ -228,31 +228,25 @@ async function handleSubmit() {
         </div>
       </FormItem>
       <FormItem label="状态">
-        <SysOriginSelect v-model:value="form.showcase"
-          :options="sysOriginOptions"
-        ></SysOriginSelect>
+        <Select
+          v-model:value="form.showcase"
+          :options="SHOWCASE_OPTIONS"
+          option-label-prop="label"
+        />
       </FormItem>
       <FormItem label="麦位名称">
-        <Select option-label-prop="label" v-model:value="form.mikeName">
-          <SelectOption
-            v-for="item in MIKE_NAME_OPTIONS"
-            :key="item.value"
-            :value="item.value"
-           :label="`${item.label}`">
-            {{ item.label }}
-          </SelectOption>
-        </Select>
+        <Select
+          v-model:value="form.mikeName"
+          :options="MIKE_NAME_OPTIONS"
+          option-label-prop="label"
+        />
       </FormItem>
       <FormItem label="麦位类型">
-        <Select option-label-prop="label" v-model:value="form.mikeType">
-          <SelectOption
-            v-for="item in MIKE_TYPE_OPTIONS"
-            :key="item.value"
-            :value="item.value"
-           :label="`${item.label}`">
-            {{ item.label }}
-          </SelectOption>
-        </Select>
+        <Select
+          v-model:value="form.mikeType"
+          :options="MIKE_TYPE_OPTIONS"
+          option-label-prop="label"
+        />
       </FormItem>
       <FormItem label="15天麦位价格">
         <Input v-model:value="form.fifteenMikeCandy" />
@@ -261,10 +255,11 @@ async function handleSubmit() {
         <Input v-model:value="form.longMikeCandy" />
       </FormItem>
       <FormItem label="收费类型">
-        <Select option-label-prop="label" v-model:value="form.chargeType">
-          <SelectOption value="FREE" label="免费">免费</SelectOption>
-          <SelectOption value="GOLD" label="金币">金币</SelectOption>
-        </Select>
+        <Select
+          v-model:value="form.chargeType"
+          :options="CHARGE_TYPE_OPTIONS"
+          option-label-prop="label"
+        />
       </FormItem>
       <FormItem label="排序">
         <Input v-model:value="form.sort" />

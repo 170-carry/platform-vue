@@ -22,7 +22,6 @@ import {
   Modal,
   Pagination,
   Select,
-  SelectOption,
   Space,
   Table,
   message,
@@ -88,6 +87,16 @@ const languageColumns = [
   { dataIndex: 'createTime', key: 'createTime', title: '创建时间', width: 180 },
   { dataIndex: 'actions', key: 'actions', title: '操作', width: 150 },
 ];
+
+const hallFameShowcaseOptions = [
+  { label: '否', value: true as any },
+  { label: '是', value: false as any },
+];
+
+const languageSelectOptions = LANGUAGE_OPTIONS.map((item) => ({
+  label: item.name,
+  value: item.value as any,
+}));
 
 watch(
   sysOriginOptions,
@@ -305,10 +314,11 @@ loadData(true);
           <Input v-model:value="editForm.sort" placeholder="顺序(越大越靠前)" />
         </FormItem>
         <FormItem label="上架">
-          <Select option-label-prop="label" v-model:value="editForm.del">
-            <SelectOption :value="true" label="否">否</SelectOption>
-            <SelectOption :value="false" label="是">是</SelectOption>
-          </Select>
+          <Select
+            v-model:value="editForm.del"
+            :options="hallFameShowcaseOptions"
+            option-label-prop="label"
+          />
         </FormItem>
       </Form>
     </Modal>
@@ -366,15 +376,12 @@ loadData(true);
     >
       <Form layout="vertical">
         <FormItem label="语言">
-          <Select option-label-prop="label" v-model:value="languageForm.language" :disabled="!!languageForm.id">
-            <SelectOption
-              v-for="item in LANGUAGE_OPTIONS"
-              :key="item.value"
-              :value="item.value"
-             :label="`${item.name}`">
-              {{ item.name }}
-            </SelectOption>
-          </Select>
+          <Select
+            v-model:value="languageForm.language"
+            :disabled="!!languageForm.id"
+            :options="languageSelectOptions"
+            option-label-prop="label"
+          />
         </FormItem>
         <FormItem label="活动名称">
           <Input

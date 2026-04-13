@@ -20,7 +20,6 @@ import {
   Modal,
   Pagination,
   Select,
-  SelectOption,
   Space,
   Table,
   Tag,
@@ -268,19 +267,12 @@ function handlePageChange(page: number, pageSize: number) {
       <Form layout="vertical">
         <FormItem label="关联类型">
           <Select
-            option-label-prop="label"
             v-model:value="form.bountyType"
             allow-clear
+            :options="BOUNTY_TYPE_OPTIONS"
+            option-label-prop="label"
             placeholder="类型"
-          >
-            <SelectOption
-              v-for="item in BOUNTY_TYPE_OPTIONS"
-              :key="item.value"
-              :value="item.value"
-             :label="`${item.label}`">
-              {{ item.label }}
-            </SelectOption>
-          </Select>
+          />
         </FormItem>
         <FormItem label="名称">
           <Input v-model:value="form.name" placeholder="名称" />

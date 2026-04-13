@@ -10,7 +10,6 @@ import {
   Input,
   Modal,
   Select,
-  SelectOption,
   message,
 } from 'antdv-next';
 
@@ -93,15 +92,11 @@ async function handleSubmit() {
         <Input v-model:value="form.userId" />
       </FormItem>
       <FormItem label="角色">
-        <Select option-label-prop="label" v-model:value="form.roles">
-          <SelectOption
-            v-for="item in ROLE_OPTIONS"
-            :key="item.value"
-            :value="item.value"
-           :label="`${item.label}`">
-            {{ item.label }}
-          </SelectOption>
-        </Select>
+        <Select
+          v-model:value="form.roles"
+          :options="ROLE_OPTIONS"
+          option-label-prop="label"
+        />
       </FormItem>
     </Form>
   </Modal>

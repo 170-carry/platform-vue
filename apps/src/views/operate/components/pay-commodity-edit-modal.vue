@@ -15,7 +15,6 @@ import {
   Input,
   Modal,
   Select,
-  SelectOption,
   message,
 } from 'antdv-next';
 
@@ -43,6 +42,16 @@ const activeKeys = ref<Array<string>>([]);
 const supportAmounts = ref<Array<Record<string, any>>>([]);
 const computedAmount = ref('');
 const amountUsdText = ref('');
+
+const shelfOptions = [
+  { label: '上架', value: true as any },
+  { label: '下架', value: false as any },
+];
+
+const webProductTypeOptions = WEB_PRODUCT_TYPE_OPTIONS.map((item) => ({
+  label: item.name,
+  value: item.value as any,
+}));
 
 const form = reactive<Record<string, any>>({
   amountUsd: '',
@@ -206,22 +215,19 @@ async function handleSubmit() {
       </FormItem>
 
       <FormItem label="状态">
-        <Select option-label-prop="label" v-model:value="form.shelf">
-          <SelectOption :value="true" label="上架">上架</SelectOption>
-          <SelectOption :value="false" label="下架">下架</SelectOption>
-        </Select>
+        <Select
+          v-model:value="form.shelf"
+          :options="shelfOptions"
+          option-label-prop="label"
+        />
       </FormItem>
 
       <FormItem v-if="!isUpdate" label="商品类型">
-        <Select option-label-prop="label" v-model:value="form.type">
-          <SelectOption
-            v-for="item in WEB_PRODUCT_TYPE_OPTIONS"
-            :key="item.value"
-            :value="item.value"
-           :label="`${item.name}`">
-            {{ item.name }}
-          </SelectOption>
-        </Select>
+        <Select
+          v-model:value="form.type"
+          :options="webProductTypeOptions"
+          option-label-prop="label"
+        />
       </FormItem>
 
       <FormItem label="金币数">

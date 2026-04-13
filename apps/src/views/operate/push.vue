@@ -24,7 +24,6 @@ import {
   Modal,
   Pagination,
   Select,
-  SelectOption,
   Space,
   TabPane,
   Table,
@@ -55,6 +54,35 @@ const LANGUAGE_OPTIONS = [
   { name: '阿拉伯语', value: 'ar' },
   { name: '土耳其语', value: 'tr' },
   { name: '其他语言', value: 'en' },
+];
+
+const appPlatformSelectOptions = APP_PLATFORM_OPTIONS.map((item) => ({
+  label: item.name,
+  value: item.value as any,
+}));
+
+const deviceTypeSelectOptions = DEVICE_TYPE_OPTIONS.map((item) => ({
+  label: item.name,
+  value: item.value as any,
+}));
+
+const pushStatusSelectOptions = PUSH_STATUS_OPTIONS.map((item) => ({
+  label: item.name,
+  value: item.value as any,
+}));
+
+const shelfStatusSelectOptions = SHELF_STATUS_OPTIONS.map((item) => ({
+  label: item.name,
+  value: item.value as any,
+}));
+
+const languageSelectOptions = LANGUAGE_OPTIONS.map((item) => ({
+  label: item.name,
+  value: item.value as any,
+}));
+
+const businessSceneOptions = [
+  { label: '官方通知', value: 'OFFICIAL_MESSAGE_NOTICE' as any },
 ];
 
 const accessStore = useAccessStore();
@@ -354,43 +382,36 @@ watch(
               />
             </FormItem>
             <FormItem label="客户端">
-              <Select option-label-prop="label" v-model:value="newPushForm.platform" allow-clear>
-                <SelectOption
-                  v-for="item in APP_PLATFORM_OPTIONS"
-                  :key="item.value"
-                  :value="item.value"
-                 :label="`${item.name}`">
-                  {{ item.name }}
-                </SelectOption>
-              </Select>
+              <Select
+                v-model:value="newPushForm.platform"
+                allow-clear
+                :options="appPlatformSelectOptions"
+                option-label-prop="label"
+              />
             </FormItem>
             <FormItem label="推送平台">
-              <Select option-label-prop="label" v-model:value="newPushForm.deviceType" allow-clear>
-                <SelectOption
-                  v-for="item in DEVICE_TYPE_OPTIONS"
-                  :key="item.value"
-                  :value="item.value"
-                 :label="`${item.name}`">
-                  {{ item.name }}
-                </SelectOption>
-              </Select>
+              <Select
+                v-model:value="newPushForm.deviceType"
+                allow-clear
+                :options="deviceTypeSelectOptions"
+                option-label-prop="label"
+              />
             </FormItem>
             <FormItem label="语言">
-              <Select option-label-prop="label" v-model:value="newPushForm.language" allow-clear>
-                <SelectOption
-                  v-for="item in LANGUAGE_OPTIONS"
-                  :key="item.value"
-                  :value="item.value"
-                 :label="`${item.name}`">
-                  {{ item.name }}
-                </SelectOption>
-              </Select>
+              <Select
+                v-model:value="newPushForm.language"
+                allow-clear
+                :options="languageSelectOptions"
+                option-label-prop="label"
+              />
             </FormItem>
           </div>
           <FormItem label="业务场景">
-            <Select option-label-prop="label" v-model:value="newPushForm.businessScene">
-              <SelectOption value="OFFICIAL_MESSAGE_NOTICE" label="官方通知">官方通知</SelectOption>
-            </Select>
+            <Select
+              v-model:value="newPushForm.businessScene"
+              :options="businessSceneOptions"
+              option-label-prop="label"
+            />
           </FormItem>
           <FormItem label="定投UID">
             <Input
@@ -420,8 +441,7 @@ watch(
             allow-clear
             placeholder="客户端"
             style="width: 120px"
-          
-            :options="APP_PLATFORM_OPTIONS.map((item) => ({ label: `${item.name}`, value: item.value as any }))"
+            :options="appPlatformSelectOptions"
           />
           <Select
             option-label-prop="label"
@@ -429,30 +449,16 @@ watch(
             allow-clear
             placeholder="推送平台"
             style="width: 120px"
-          >
-            <SelectOption
-              v-for="item in DEVICE_TYPE_OPTIONS"
-              :key="item.value"
-              :value="item.value"
-             :label="`${item.name}`">
-              {{ item.name }}
-            </SelectOption>
-          </Select>
+            :options="deviceTypeSelectOptions"
+          />
           <Select
             option-label-prop="label"
             v-model:value="logQuery.pushStatus"
             allow-clear
             placeholder="状态"
             style="width: 120px"
-          >
-            <SelectOption
-              v-for="item in PUSH_STATUS_OPTIONS"
-              :key="item.value"
-              :value="item.value"
-             :label="`${item.name}`">
-              {{ item.name }}
-            </SelectOption>
-          </Select>
+            :options="pushStatusSelectOptions"
+          />
           <RangePicker
             v-model:value="logRange"
             show-time
@@ -505,15 +511,8 @@ watch(
             allow-clear
             placeholder="状态"
             style="width: 120px"
-          >
-            <SelectOption
-              v-for="item in SHELF_STATUS_OPTIONS"
-              :key="String(item.value)"
-              :value="item.value"
-             :label="`${item.name}`">
-              {{ item.name }}
-            </SelectOption>
-          </Select>
+            :options="shelfStatusSelectOptions"
+          />
           <Button :loading="taskLoading" type="primary" @click="loadTasks(true)">
             搜索
           </Button>
@@ -580,53 +579,40 @@ watch(
         </FormItem>
         <div class="grid-two">
           <FormItem label="客户端">
-            <Select option-label-prop="label" v-model:value="taskForm.platform">
-              <SelectOption
-                v-for="item in APP_PLATFORM_OPTIONS"
-                :key="item.value"
-                :value="item.value"
-               :label="`${item.name}`">
-                {{ item.name }}
-              </SelectOption>
-            </Select>
+            <Select
+              v-model:value="taskForm.platform"
+              :options="appPlatformSelectOptions"
+              option-label-prop="label"
+            />
           </FormItem>
           <FormItem label="推送平台">
-            <Select option-label-prop="label" v-model:value="taskForm.deviceType">
-              <SelectOption
-                v-for="item in DEVICE_TYPE_OPTIONS"
-                :key="item.value"
-                :value="item.value"
-               :label="`${item.name}`">
-                {{ item.name }}
-              </SelectOption>
-            </Select>
+            <Select
+              v-model:value="taskForm.deviceType"
+              :options="deviceTypeSelectOptions"
+              option-label-prop="label"
+            />
           </FormItem>
           <FormItem label="语言">
-            <Select option-label-prop="label" v-model:value="taskForm.language" allow-clear>
-              <SelectOption
-                v-for="item in LANGUAGE_OPTIONS"
-                :key="item.value"
-                :value="item.value"
-               :label="`${item.name}`">
-                {{ item.name }}
-              </SelectOption>
-            </Select>
+            <Select
+              v-model:value="taskForm.language"
+              allow-clear
+              :options="languageSelectOptions"
+              option-label-prop="label"
+            />
           </FormItem>
           <FormItem label="业务场景">
-            <Select option-label-prop="label" v-model:value="taskForm.businessScene">
-              <SelectOption value="OFFICIAL_MESSAGE_NOTICE" label="官方通知">官方通知</SelectOption>
-            </Select>
+            <Select
+              v-model:value="taskForm.businessScene"
+              :options="businessSceneOptions"
+              option-label-prop="label"
+            />
           </FormItem>
           <FormItem label="状态">
-            <Select option-label-prop="label" v-model:value="taskForm.shelfStatus">
-              <SelectOption
-                v-for="item in SHELF_STATUS_OPTIONS"
-                :key="String(item.value)"
-                :value="item.value"
-               :label="`${item.name}`">
-                {{ item.name }}
-              </SelectOption>
-            </Select>
+            <Select
+              v-model:value="taskForm.shelfStatus"
+              :options="shelfStatusSelectOptions"
+              option-label-prop="label"
+            />
           </FormItem>
         </div>
         <FormItem label="标题">

@@ -17,7 +17,6 @@ import {
   InputNumber,
   Modal,
   Select,
-  SelectOption,
   TextArea,
   message,
 } from 'antdv-next';
@@ -41,6 +40,22 @@ const form = reactive({
   reasonType: 5,
   remarks: '',
 });
+const rewardReasonOptions = [
+  { label: '奖励', value: 1 as any },
+  { label: '内部', value: 2 as any },
+  { label: '工资', value: 3 as any },
+  { label: '充值', value: 4 as any },
+  { label: '其他', value: 5 as any },
+];
+const deductReasonOptions = [
+  { label: '违规', value: 1 as any },
+  { label: '多发', value: 2 as any },
+  { label: '操作错误', value: 3 as any },
+  { label: '其他', value: 4 as any },
+];
+const reasonTypeOptions = computed(() =>
+  props.action === 'reward' ? rewardReasonOptions : deductReasonOptions,
+);
 
 const title = computed(() => {
   const typeName =
@@ -56,7 +71,7 @@ watch(
       return;
     }
     form.amount = undefined;
-    form.reasonType = 5;
+    form.reasonType = props.action === 'reward' ? 5 : 4;
     form.remarks = '';
   },
   { immediate: true },
@@ -141,28 +156,11 @@ async function handleSubmit() {
         />
       </FormItem>
       <FormItem label="原因">
-        <Select option-label-prop="label" v-model:value="form.reasonType">
-          <SelectOption
-            v-for="item in props.action === 'reward'
-              ? [
-                  { label: '奖励', value: 1 },
-                  { label: '内部', value: 2 },
-                  { label: '工资', value: 3 },
-                  { label: '充值', value: 4 },
-                  { label: '其他', value: 5 },
-                ]
-              : [
-                  { label: '违规', value: 1 },
-                  { label: '多发', value: 2 },
-                  { label: '操作错误', value: 3 },
-                  { label: '其他', value: 4 },
-                ]"
-            :key="item.value"
-            :value="item.value"
-           :label="`${item.label}`">
-            {{ item.label }}
-          </SelectOption>
-        </Select>
+        <Select
+          option-label-prop="label"
+          v-model:value="form.reasonType"
+          :options="reasonTypeOptions"
+        />
       </FormItem>
       <FormItem label="备注">
         <TextArea v-model:value="form.remarks" :rows="4" />

@@ -14,7 +14,6 @@ import {
   Empty,
   Input,
   Select,
-  SelectOption,
   Space,
   Spin,
 } from 'antdv-next';
@@ -48,6 +47,11 @@ const TYPE_OPTIONS: SourceTypeOption[] = [
   { label: '飘窗', value: 'FLOAT_PICTURE' },
   { label: '碎片', value: 'FRAGMENTS' },
 ];
+
+const typeSelectOptions = TYPE_OPTIONS.map((item) => ({
+  label: item.label,
+  value: item.value as any,
+}));
 
 const props = withDefaults(
   defineProps<{
@@ -224,19 +228,14 @@ function handleSelect(item: SourceItem) {
     @close="emit('close')"
   >
     <Space class="toolbar" wrap>
-      <Select option-label-prop="label"
+      <Select
         v-model:value="query.propsType"
+        :options="typeSelectOptions"
+        option-label-prop="label"
+        placeholder="请选择道具类型"
         style="width: 220px"
         @change="handleTypeChange"
-      >
-        <SelectOption
-          v-for="item in TYPE_OPTIONS"
-          :key="item.value"
-          :value="item.value"
-         :label="`${item.label}`">
-          {{ item.label }}
-        </SelectOption>
-      </Select>
+      />
       <Input
         v-model:value="keyword"
         allow-clear

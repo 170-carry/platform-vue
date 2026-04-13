@@ -17,7 +17,6 @@ import {
   FormItem,
   Input,
   Select,
-  SelectOption,
   Space,
   Switch,
   message,
@@ -110,6 +109,24 @@ const rewardItems = computed(() => form.rewardConfigList);
 const sourceSelectOptions = computed<DraftSourceOption[]>(
   () => sourceOptionsMap[draft.type]?.list || [],
 );
+const addTypeOptions = computed(() =>
+  PROPS_SOURCE_GROUP_ADD_TYPES.map((type) => ({
+    label: getAddTypeName(type),
+    value: type as any,
+  })),
+);
+const draftResourceOptions = computed(() =>
+  sourceSelectOptions.value.map((item) => ({
+    label: `${item.id} ${item.name}`,
+    value: item.id as any,
+  })),
+);
+
+function resetSourceOptionsMap() {
+  Object.keys(sourceOptionsMap).forEach((key) => {
+    delete sourceOptionsMap[key];
+  });
+}
 
 function createTypeStore(type: string) {
   if (!sourceOptionsMap[type]) {
@@ -140,6 +157,7 @@ watch(
     if (!open) {
       return;
     }
+    resetSourceOptionsMap();
     const record = props.record;
     if (!record) {
       resetForm();
@@ -162,6 +180,10 @@ watch(
   () => props.sysOrigin,
   (value) => {
     if (value) {
+      if (form.sysOrigin && form.sysOrigin !== value) {
+        resetSourceOptionsMap();
+        resetDraft();
+      }
       form.sysOrigin = value;
     }
   },
@@ -443,19 +465,13 @@ async function handleSubmit() {
       <div class="draft-box">
         <div class="draft-box__title">添加配置</div>
         <FormItem label="奖励类型">
-          <Select option-label-prop="label"
+          <Select
             v-model:value="draft.type"
+            :options="addTypeOptions"
+            option-label-prop="label"
             placeholder="请选择奖励类型"
             @change="handleDraftTypeChange"
-          >
-            <SelectOption
-              v-for="type in PROPS_SOURCE_GROUP_ADD_TYPES"
-              :key="type"
-              :value="type"
-             :label="`${getAddTypeName(type)}`">
-              {{ getAddTypeName(type) }}
-            </SelectOption>
-          </Select>
+          />
         </FormItem>
 
         <template v-if="draft.type === 'SPECIAL_ID'">
@@ -484,23 +500,16 @@ async function handleSubmit() {
 
         <template v-else>
           <FormItem label="资源">
-            <Select option-label-prop="label"
+            <Select
               v-model:value="draft.content"
+              :options="draftResourceOptions"
               :loading="draftLoading"
               option-filter-prop="label"
+              option-label-prop="label"
               placeholder="请选择资源"
               show-search
               @change="handleDraftContentChange"
-            >
-              <SelectOption
-                v-for="item in sourceSelectOptions"
-                :key="item.id"
-                :label="`${item.id} ${item.name}`"
-                :value="item.id"
-              >
-                {{ item.id }} / {{ item.name }}
-              </SelectOption>
-            </Select>
+            />
           </FormItem>
 
           <div v-if="selectedDraftResource" class="draft-preview">

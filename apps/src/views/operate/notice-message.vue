@@ -32,7 +32,6 @@ import {
   Modal,
   Pagination,
   Select,
-  SelectOption,
   Switch,
   Table,
   TextArea,
@@ -49,6 +48,11 @@ const NOTICE_TYPE_LABELS: Record<string, string> = {
 const ANNOUNCEMENT_STATUS_OPTIONS = [
   { name: '已发布', value: true },
   { name: '未发布', value: false },
+];
+
+const NOTICE_TYPE_OPTIONS = [
+  { label: '通知', value: 'notification' as any },
+  { label: '活动', value: 'activity' as any },
 ];
 
 function createForm() {
@@ -401,10 +405,11 @@ async function handleShelfChange(record: Record<string, any>, checked: boolean) 
 
         <div class="field">
           <div class="label">类型</div>
-          <Select option-label-prop="label" v-model:value="form.type">
-            <SelectOption value="notification" label="通知">通知</SelectOption>
-            <SelectOption value="activity" label="活动">活动</SelectOption>
-          </Select>
+          <Select
+            v-model:value="form.type"
+            :options="NOTICE_TYPE_OPTIONS"
+            option-label-prop="label"
+          />
         </div>
 
         <div class="field">

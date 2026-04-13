@@ -9,7 +9,6 @@ import {
   Drawer,
   Pagination,
   Select,
-  SelectOption,
   Space,
   Table,
 } from 'antdv-next';
@@ -111,17 +110,10 @@ function handlePageChange(page: number, pageSize: number) {
       <Select option-label-prop="label"
         v-model:value="query.roomRole"
         allow-clear
+        :options="ROOM_ROLE_OPTIONS"
         placeholder="角色"
         style="width: 140px"
-      >
-        <SelectOption
-          v-for="item in ROOM_ROLE_OPTIONS"
-          :key="item.value"
-          :value="item.value"
-         :label="`${item.label}`">
-          {{ item.label }}
-        </SelectOption>
-      </Select>
+      />
       <Button :loading="loading" type="primary" @click="loadData(true)">
         搜索
       </Button>

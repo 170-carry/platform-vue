@@ -23,7 +23,6 @@ import {
   Input,
   Modal,
   Select,
-  SelectOption,
   Space,
   Table,
   message,
@@ -62,6 +61,13 @@ const query = reactive({
 });
 
 const form = reactive(createForm());
+
+const regionSelectOptions = computed(() =>
+  regions.value.map((item) => ({
+    label: String(item.regionName || item.id || '-'),
+    value: item.id as any,
+  })),
+);
 
 const columns = [
   { dataIndex: 'sysOrigin', key: 'sysOrigin', title: '来源系统', width: 120 },
@@ -242,8 +248,7 @@ async function submitForm() {
             placeholder="区域"
             style="width: 160px"
             @change="handleSearch"
-          
-            :options="regions.map((item) => ({ label: `${item.regionName}`, value: item.id as any }))"
+            :options="regionSelectOptions"
           />
           <Button :loading="loading" type="primary" @click="handleSearch">
             搜索
@@ -321,21 +326,15 @@ async function submitForm() {
         </div>
         <div class="field">
           <div class="label">区域</div>
-          <Select option-label-prop="label"
+          <Select
             v-model:value="form.regionList"
+            :options="regionSelectOptions"
             mode="multiple"
             :loading="regionsLoading"
+            option-label-prop="label"
             placeholder="请选择区域"
             style="width: 100%"
-          >
-            <SelectOption
-              v-for="item in regions"
-              :key="item.id"
-              :value="item.id"
-             :label="`${item.regionName}`">
-              {{ item.regionName }}
-            </SelectOption>
-          </Select>
+          />
         </div>
         <div class="field">
           <div class="label">时间段</div>

@@ -24,7 +24,6 @@ import {
   Modal,
   Pagination,
   Select,
-  SelectOption,
   Space,
   Table,
   message,
@@ -41,8 +40,8 @@ const CARD_OPTIONS = [
 ];
 
 const SHOWCASE_OPTIONS = [
-  { label: '上架', value: true },
-  { label: '下架', value: false },
+  { label: '上架', value: true as any },
+  { label: '下架', value: false as any },
 ];
 
 function createForm() {
@@ -338,27 +337,21 @@ async function submitForm() {
         </div>
         <div class="field">
           <div class="label">状态</div>
-          <Select option-label-prop="label" v-model:value="form.showcase" style="width: 100%">
-            <SelectOption
-              v-for="item in SHOWCASE_OPTIONS"
-              :key="String(item.value)"
-              :value="item.value"
-             :label="`${item.label}`">
-              {{ item.label }}
-            </SelectOption>
-          </Select>
+          <Select
+            v-model:value="form.showcase"
+            :options="SHOWCASE_OPTIONS"
+            option-label-prop="label"
+            style="width: 100%"
+          />
         </div>
         <div class="field">
           <div class="label">卡片</div>
-          <Select option-label-prop="label" v-model:value="form.cardType" style="width: 100%">
-            <SelectOption
-              v-for="item in CARD_OPTIONS"
-              :key="item.value"
-              :value="item.value"
-             :label="`${item.label}`">
-              {{ item.label }}
-            </SelectOption>
-          </Select>
+          <Select
+            v-model:value="form.cardType"
+            :options="CARD_OPTIONS"
+            option-label-prop="label"
+            style="width: 100%"
+          />
         </div>
         <div class="field">
           <div class="label">金额</div>

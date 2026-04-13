@@ -25,7 +25,6 @@ import {
   InputNumber,
   Modal,
   Select,
-  SelectOption,
   Space,
   Table,
   Tag,
@@ -129,6 +128,26 @@ const columns = [
   { dataIndex: 'base', key: 'base', title: '房间信息', width: 180 },
   { dataIndex: 'time', key: 'time', title: '时间', width: 220 },
   { dataIndex: 'actions', key: 'actions', title: '操作', width: 260 },
+];
+const roomEventSelectOptions = ROOM_EVENT_OPTIONS.map((item) => ({
+  label: item.name,
+  value: item.value as any,
+}));
+const roomUserEventSelectOptions = ROOM_USER_EVENT_OPTIONS.map((item) => ({
+  label: item.name,
+  value: item.value as any,
+}));
+const roomRoleActionOptions = [
+  ...ROOM_ROLE_OPTIONS.map((item) => ({
+    disabled: item.value === 'HOMEOWNER',
+    label: item.name,
+    value: item.value as any,
+  })),
+  { label: '游客', value: 'TOURIST' as any },
+];
+const approvalStateOptions = [
+  { label: '通过', value: 'PASS' as any },
+  { label: '不通过', value: 'NOT_PASS' as any },
 ];
 
 watch(
@@ -561,15 +580,11 @@ async function handleCopy(value: number | string) {
           />
         </FormItem>
         <FormItem label="状态">
-          <Select option-label-prop="label" v-model:value="editForm.event">
-            <SelectOption
-              v-for="item in ROOM_EVENT_OPTIONS"
-              :key="item.value"
-              :value="item.value"
-             :label="`${item.name}`">
-              {{ item.name }}
-            </SelectOption>
-          </Select>
+          <Select
+            option-label-prop="label"
+            v-model:value="editForm.event"
+            :options="roomEventSelectOptions"
+          />
         </FormItem>
         <FormItem label="管理员数量">
           <InputNumber
@@ -601,15 +616,11 @@ async function handleCopy(value: number | string) {
           <Input v-model:value="memberActionForm.userAccount" />
         </FormItem>
         <FormItem label="事件">
-          <Select option-label-prop="label" v-model:value="memberActionForm.event">
-            <SelectOption
-              v-for="item in ROOM_USER_EVENT_OPTIONS"
-              :key="item.value"
-              :value="item.value"
-             :label="`${item.name}`">
-              {{ item.name }}
-            </SelectOption>
-          </Select>
+          <Select
+            option-label-prop="label"
+            v-model:value="memberActionForm.event"
+            :options="roomUserEventSelectOptions"
+          />
         </FormItem>
       </Form>
     </Modal>
@@ -633,17 +644,11 @@ async function handleCopy(value: number | string) {
           <Input v-model:value="roleActionForm.userAccount" />
         </FormItem>
         <FormItem label="权限">
-          <Select option-label-prop="label" v-model:value="roleActionForm.roles">
-            <SelectOption
-              v-for="item in ROOM_ROLE_OPTIONS"
-              :key="item.value"
-              :disabled="item.value === 'HOMEOWNER'"
-              :value="item.value"
-             :label="`${item.name}`">
-              {{ item.name }}
-            </SelectOption>
-            <SelectOption value="TOURIST" label="游客">游客</SelectOption>
-          </Select>
+          <Select
+            option-label-prop="label"
+            v-model:value="roleActionForm.roles"
+            :options="roomRoleActionOptions"
+          />
         </FormItem>
       </Form>
     </Modal>
@@ -659,10 +664,11 @@ async function handleCopy(value: number | string) {
     >
       <Form layout="vertical">
         <FormItem label="审批状态">
-          <Select option-label-prop="label" v-model:value="approvalState">
-            <SelectOption value="PASS" label="通过">通过</SelectOption>
-            <SelectOption value="NOT_PASS" label="不通过">不通过</SelectOption>
-          </Select>
+          <Select
+            option-label-prop="label"
+            v-model:value="approvalState"
+            :options="approvalStateOptions"
+          />
         </FormItem>
         <FormItem label="审批内容">
           <div v-if="approvalType === 'ROOM_AVATAR'" class="approval-preview">
